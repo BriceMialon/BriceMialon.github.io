@@ -468,29 +468,40 @@ document.addEventListener('DOMContentLoaded', function () {
     var startT = performance.now();
     var countEl = document.getElementById('preloaderCount');
     var barEl = document.getElementById('preloaderBar');
-    var pageLoaded = false, finished = false;
+    var pageLoaded = false, finished = false, loadedAt = null, pctAtLoad = 0;
     window.addEventListener('load', function () { pageLoaded = true; });
     setTimeout(function () { pageLoaded = true; }, 4000); /* never hold visitors hostage */
-    var pct = 0;
+    function finishPreloader() {
+      if (finished) return;
+      finished = true;
+      try { sessionStorage.setItem('bm-intro', '1'); } catch (e) { }
+      preloader.classList.add('done');
+      document.body.classList.remove('is-loading');
+      introDone();
+    }
+    /* Progress is time-based (not frame-based) so it completes reliably
+       even when rAF is throttled in background tabs. */
     (function tickPreloader(now) {
-      var elapsed = (now || performance.now()) - startT;
-      var target = pageLoaded ? 100 : Math.min(90, elapsed / 28);
-      pct += (target - pct) * 0.14;
-      if (pct > 99.4) pct = 100;
+      now = now || performance.now();
+      var elapsed = now - startT;
+      var pct;
+      if (pageLoaded && loadedAt === null) {
+        loadedAt = now;
+        pctAtLoad = Math.min(88, elapsed / 28);
+      }
+      if (loadedAt === null) {
+        pct = Math.min(88, elapsed / 28);
+      } else {
+        var f = Math.min(1, (now - loadedAt) / 600);
+        pct = pctAtLoad + (100 - pctAtLoad) * (1 - Math.pow(1 - f, 2));
+      }
       if (countEl) countEl.textContent = Math.round(pct);
       if (barEl) barEl.style.width = pct + '%';
-      if (pct >= 100 && elapsed >= minTime) {
-        if (!finished) {
-          finished = true;
-          try { sessionStorage.setItem('bm-intro', '1'); } catch (e) { }
-          preloader.classList.add('done');
-          document.body.classList.remove('is-loading');
-          introDone();
-        }
-        return;
-      }
+      if (pct >= 99.9 && elapsed >= minTime) { finishPreloader(); return; }
       requestAnimationFrame(tickPreloader);
     })();
+    /* absolute failsafe (setTimeout survives rAF throttling) */
+    setTimeout(finishPreloader, Math.max(minTime, 4000) + 1800);
   } else {
     if (preloader) preloader.parentNode.removeChild(preloader);
     introDone();
