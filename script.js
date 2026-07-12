@@ -937,11 +937,22 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       grid.classList.add('vg-anim');
       var cardsArr = Array.prototype.slice.call(grid.children);
+      cardsArr.forEach(function (c) {
+        var f = c.querySelector('.vg-front');
+        if (f) f.style.setProperty('--shd', (Math.random() * 5).toFixed(2) + 's');
+      });
       var gridIo = new IntersectionObserver(function (entries) {
         if (!entries[0].isIntersecting) return;
         gridIo.disconnect();
+        /* deal the cards from the centre of the table, like a croupier */
+        var gr = grid.getBoundingClientRect();
+        var gcx = gr.left + gr.width / 2, gcy = gr.top + gr.height / 2;
         cardsArr.forEach(function (c, i) {
-          setTimeout(function () { c.classList.add('in'); }, i * 55);
+          var cr = c.getBoundingClientRect();
+          c.style.setProperty('--dx', (gcx - (cr.left + cr.width / 2)).toFixed(0) + 'px');
+          c.style.setProperty('--dy', (gcy - (cr.top + cr.height / 2)).toFixed(0) + 'px');
+          c.style.setProperty('--dr', ((Math.random() - 0.5) * 24).toFixed(1) + 'deg');
+          setTimeout(function () { c.classList.add('in'); }, 120 + i * 75);
         });
       }, { threshold: 0.12 });
       gridIo.observe(grid);
@@ -1163,8 +1174,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  var revealedAll = false;
   if (revealBtn) {
     revealBtn.addEventListener('click', function () {
+      revealedAll = true;
       VALUES.forEach(function (v) { if (!v.found) { v.found = true; found++; v.card.classList.add('found'); } });
       updateHud();
       setFeedback('Les seize valeurs sont révélées. Clique sur une carte pour explorer le chapitre associé.', '');
@@ -1181,4 +1194,131 @@ document.addEventListener('DOMContentLoaded', function () {
     if (window.__lenis) window.__lenis.scrollTo(target, { offset: -74, duration: 1.5 });
     else target.scrollIntoView({ behavior: 'smooth' });
   });
+
+  /* ---------- cinematic table ---------- */
+  var finePointerVg = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var board = document.querySelector('.vg-board');
+
+  /* spotlight following the cursor across the table */
+  if (board && finePointerVg && !reduceFx) {
+    var spot = document.createElement('div');
+    spot.className = 'vg-spot';
+    board.appendChild(spot);
+    board.addEventListener('mousemove', function (e) {
+      var r = board.getBoundingClientRect();
+      spot.style.setProperty('--sx', (e.clientX - r.left + 30) + 'px');
+      spot.style.setProperty('--sy', (e.clientY - r.top + 30) + 'px');
+      board.classList.add('lit');
+    });
+    board.addEventListener('mouseleave', function () { board.classList.remove('lit'); });
+  }
+
+  /* 3D tilt under the cursor */
+  if (finePointerVg && !reduceFx) {
+    VALUES.forEach(function (v) {
+      var card = v.card;
+      card.addEventListener('mousemove', function (e) {
+        if (grid.classList.contains('vg-anim') && !card.classList.contains('in')) return;
+        var r = card.getBoundingClientRect();
+        var rx = ((e.clientY - r.top) / r.height - 0.5) * -9;
+        var ry = ((e.clientX - r.left) / r.width - 0.5) * 9;
+        card.style.transform = 'perspective(900px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+      });
+      card.addEventListener('mouseleave', function () {
+        card.style.transition = 'transform .5s var(--ease)';
+        card.style.transform = '';
+        setTimeout(function () { card.style.transition = ''; }, 500);
+      });
+    });
+  }
+
+  /* tapping a hidden card whispers its first letter */
+  VALUES.forEach(function (v) {
+    v.card.addEventListener('click', function (e) {
+      if (v.found || e.target.closest('a')) return;
+      v.hintShown = true;
+      var letterEl = v.card.querySelector('.vg-letter');
+      if (letterEl) letterEl.textContent = 'Indice : « ' + v.name.charAt(0) + '… »';
+      v.card.classList.remove('peek');
+      void v.card.offsetWidth;
+      v.card.classList.add('peek');
+      setFeedback('Cette carte commence par « ' + v.name.charAt(0) + ' ». À toi de jouer.', '');
+      if (input && finePointerVg) input.focus();
+    });
+  });
+
+  /* level-up flash */
+  var lvlOverlay = null, lastLevelIdx = 0;
+  function levelIdx() { return found >= 12 ? 3 : found >= 8 ? 2 : found >= 4 ? 1 : 0; }
+  function showLevelUp(text) {
+    if (reduceFx) return;
+    if (!lvlOverlay) {
+      lvlOverlay = document.createElement('div');
+      lvlOverlay.className = 'vg-levelup';
+      lvlOverlay.innerHTML = '<div class="vg-lvl-text"></div>';
+      document.body.appendChild(lvlOverlay);
+    }
+    lvlOverlay.querySelector('.vg-lvl-text').textContent = text;
+    lvlOverlay.classList.remove('show');
+    void lvlOverlay.offsetWidth;
+    lvlOverlay.classList.add('show');
+  }
+
+  /* grand finale at 16/16 */
+  var finalShown = false;
+  function showFinale() {
+    if (finalShown) return;
+    finalShown = true;
+    var overlay = document.createElement('div');
+    overlay.className = 'vg-final';
+    var card = document.createElement('div');
+    card.className = 'vg-final-card';
+    var close = document.createElement('button');
+    close.className = 'vg-final-close';
+    close.setAttribute('aria-label', 'Fermer');
+    close.textContent = '\u00d7';
+    var eyebrow = document.createElement('span');
+    eyebrow.className = 'vg-final-eyebrow';
+    eyebrow.textContent = 'Seize sur seize';
+    var h = document.createElement('h4');
+    h.textContent = 'Match parfait.';
+    var p = document.createElement('p');
+    p.innerHTML = 'Tu viens de dresser mon portrait en <span class="vg-final-score">' + score + ' pts</span>, top ' + Math.max(100 - percentile(), 1) + ' % des visiteurs. Si mes valeurs te parlent autant, on devrait discuter.';
+    var cta = document.createElement('a');
+    cta.className = 'btn btn-primary';
+    cta.href = '#contact';
+    cta.textContent = 'Discutons-en';
+    card.appendChild(close); card.appendChild(eyebrow); card.appendChild(h); card.appendChild(p); card.appendChild(cta);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+    function killOverlay() { overlay.classList.remove('show'); setTimeout(function () { if (overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 300); }
+    close.addEventListener('click', killOverlay);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) killOverlay(); });
+    cta.addEventListener('click', function (e) {
+      e.preventDefault();
+      killOverlay();
+      var t = document.querySelector('#contact');
+      if (window.__lenis) window.__lenis.scrollTo(t, { offset: -74, duration: 1.5 });
+      else t.scrollIntoView({ behavior: 'smooth' });
+    });
+    overlay.classList.add('show');
+    var c = centerOf(form);
+    burst(c.x, c.y, 60, FX_COLORS);
+    setTimeout(function () { burst(window.innerWidth * 0.3, window.innerHeight * 0.35, 45, FX_COLORS); }, 350);
+    setTimeout(function () { burst(window.innerWidth * 0.7, window.innerHeight * 0.3, 45, FX_COLORS); }, 700);
+  }
+
+  /* hook level-up + finale into the HUD updates */
+  var baseUpdateHud = updateHud;
+  updateHud = function () {
+    baseUpdateHud();
+    var idx = levelIdx();
+    if (idx > lastLevelIdx && found < VALUES.length) {
+      lastLevelIdx = idx;
+      showLevelUp(levelName());
+    }
+    if (found === VALUES.length && !finalShown && !revealedAll) {
+      setTimeout(showFinale, 900);
+    }
+  };
 })();
