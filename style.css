@@ -726,26 +726,75 @@ h2.split.play .hw-i{transition-delay:calc(var(--i,0)*45ms);}
    The visitor types the qualities they value in a workplace; every right
    guess scores points and flips over one of 16 mystery cards, revealing
    the value, why it fits Brice, and a link to the matching chapter. */
-.vg-head{max-width:760px;margin-bottom:30px;position:relative;z-index:2;}
-.vg-question{font-family:var(--font-display);font-weight:800;font-size:clamp(18px,2vw,23px);margin-bottom:16px;color:var(--ink);}
-.vg-form{display:flex;gap:10px;max-width:480px;}
-.vg-form input{
-  flex:1;min-width:0;padding:12px 20px;border-radius:100px;border:1.5px solid var(--line);
-  background:var(--surface);font-family:var(--font-body);font-size:15px;color:var(--ink);
-  outline:none;transition:border-color .2s,box-shadow .2s;
+.vg-hud{
+  background:var(--ink);border-radius:26px;padding:32px 32px 26px;color:#fff;
+  margin-bottom:26px;position:relative;z-index:2;overflow:hidden;
+  box-shadow:var(--shadow-lg);
 }
-.vg-form input:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-soft);}
-.vg-status{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:13.5px;color:var(--ink-soft);font-weight:600;}
-.vg-feedback{transition:color .2s;}
-.vg-feedback.ok{color:var(--primary-dark);}
-.vg-feedback.miss{color:var(--accent-dark);}
-.vg-metrics b{color:var(--accent);font-variant-numeric:tabular-nums;}
+.vg-hud-glow{
+  position:absolute;top:-110px;right:-110px;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,107,69,.28),transparent 70%);pointer-events:none;
+  animation:vg-glow-pulse 5s ease-in-out infinite;
+}
+@keyframes vg-glow-pulse{0%,100%{opacity:.8;transform:scale(1);}50%{opacity:1;transform:scale(1.15);}}
+.vg-title{font-family:var(--font-display);font-weight:800;font-size:clamp(20px,2.2vw,27px);margin-bottom:8px;color:#fff;}
+.vg-sub{font-size:14px;color:rgba(255,255,255,.68);max-width:660px;margin-bottom:20px;line-height:1.55;}
+.vg-form{display:flex;gap:10px;max-width:490px;position:relative;z-index:1;}
+.vg-form input{
+  flex:1;min-width:0;padding:13px 20px;border-radius:100px;
+  border:1.5px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);
+  font-family:var(--font-body);font-size:15px;color:#fff;outline:none;
+  transition:border-color .2s,box-shadow .2s,background .2s;
+}
+.vg-form input::placeholder{color:rgba(255,255,255,.4);}
+.vg-form input:focus{border-color:var(--accent);background:rgba(255,255,255,.12);box-shadow:0 0 0 4px rgba(255,107,69,.22);}
+.vg-form.shake{animation:vg-shake .45s ease;}
+@keyframes vg-shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-9px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(3px);}}
+.vg-feedback{margin-top:14px;font-size:14px;font-weight:600;color:rgba(255,255,255,.75);min-height:22px;transition:color .2s;position:relative;z-index:1;}
+.vg-feedback.ok{color:var(--sun);}
+.vg-feedback.miss{color:#ff9d80;}
+.vg-hud-row{
+  display:flex;align-items:center;gap:26px;flex-wrap:wrap;
+  margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.12);
+  position:relative;z-index:1;
+}
+.vg-stat{display:flex;flex-direction:column;gap:3px;}
+.vg-stat-label{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.45);}
+.vg-stat b{font-family:var(--font-display);font-weight:800;font-size:25px;color:var(--sun);font-variant-numeric:tabular-nums;line-height:1;}
+.vg-rank b{color:#7ee2a8;font-size:19px;}
+.vg-progress{flex:1;min-width:190px;}
+.vg-progress-top{display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:7px;}
+.vg-bar{height:10px;border-radius:100px;background:rgba(255,255,255,.12);overflow:hidden;}
+.vg-bar span{
+  display:block;height:100%;width:0%;border-radius:100px;
+  background:linear-gradient(90deg,var(--primary),var(--accent),var(--sun));
+  background-size:200% 100%;animation:vg-bar-sheen 2.4s linear infinite;
+  transition:width .7s var(--ease);
+}
+@keyframes vg-bar-sheen{from{background-position:0% 0;}to{background-position:200% 0;}}
 .vg-reveal{
-  border:1.5px solid var(--line);background:var(--surface);color:var(--ink-soft);
-  font-weight:700;font-size:12.5px;padding:7px 14px;border-radius:100px;cursor:pointer;
+  border:1.5px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.65);
+  font-weight:700;font-size:12.5px;padding:8px 15px;border-radius:100px;cursor:pointer;
   transition:border-color .2s,color .2s,transform .2s;
 }
-.vg-reveal:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px);}
+.vg-reveal:hover{border-color:var(--sun);color:var(--sun);transform:translateY(-1px);}
+@media (max-width:640px){.vg-hud{padding:22px 18px 20px;}.vg-hud-row{gap:16px;}}
+/* VFX layers */
+.vg-fx{position:fixed;inset:0;z-index:3500;pointer-events:none;}
+.vg-float{
+  position:fixed;z-index:3600;pointer-events:none;font-family:var(--font-display);font-weight:800;
+  font-size:23px;color:var(--sun);text-shadow:0 2px 14px rgba(0,0,0,.4);
+  animation:vg-float-up 1.15s ease forwards;white-space:nowrap;
+}
+@keyframes vg-float-up{0%{opacity:0;transform:translateY(8px) scale(.8);}15%{opacity:1;transform:translateY(0) scale(1.12);}100%{opacity:0;transform:translateY(-76px) scale(1);}}
+.vg-card.found.exact .vg-back{
+  border-color:var(--sun);
+  box-shadow:0 0 0 3px rgba(255,185,48,.4),0 18px 44px rgba(255,185,48,.28);
+}
+@media (prefers-reduced-motion:reduce){
+  .vg-hud-glow,.vg-bar span{animation:none !important;}
+  .vg-float{display:none !important;}
+}
 .vg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;position:relative;z-index:2;}
 @media (max-width:900px){.vg-grid{grid-template-columns:repeat(3,1fr);}}
 @media (max-width:620px){.vg-grid{grid-template-columns:repeat(2,1fr);gap:10px;}}

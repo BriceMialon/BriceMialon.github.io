@@ -797,11 +797,11 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 
 /* =================================================================
-   VALUES GUESSING GAME — "Au-delà du CV"
-   The visitor types the qualities they value most in a workplace.
-   Right guesses score points (100 exact, 70 close) and flip one of
-   16 mystery cards: the value, why it fits Brice, and a link to the
-   matching chapter. Works on desktop and mobile.
+   VALUES GAME v2 — "Devine ce qui me définit"
+   Arcade HUD, particle VFX, floating points, combo streaks and a
+   social ranking. The matcher is deliberately generous: exact hits,
+   synonyms, fuzzy spelling and loose associations all land on a
+   card — a recruiter's good answer is never called wrong.
    ================================================================= */
 (function () {
   'use strict';
@@ -811,26 +811,29 @@ document.addEventListener('DOMContentLoaded', function () {
   var feedback = document.getElementById('vgFeedback');
   var scoreEl = document.getElementById('vgScore');
   var foundEl = document.getElementById('vgFoundCount');
+  var barEl = document.getElementById('vgBar');
+  var levelEl = document.getElementById('vgLevel');
+  var rankEl = document.getElementById('vgRank');
   var revealBtn = document.getElementById('vgReveal');
   if (!grid || !form || !input) return;
 
   var VALUES = [
-    { name: 'Écoute', syns: ['empathie', 'comprehension', 'bienveillance', 'attention aux autres'], why: 'Animer une Fresque du Climat m\'a appris à écouter avant de vouloir convaincre.', href: '#engagement' },
-    { name: 'Fédérer', syns: ['leadership', 'leader', 'equipe', 'esprit d equipe', 'cohesion', 'collectif', 'management', 'manager', 'team spirit', 'entraide'], why: 'Un an à la tête du BDE GACO : 10 personnes, 40 événements, un seul collectif.', href: '#bde' },
-    { name: 'Discipline', syns: ['rigueur', 'regularite', 'serieux', 'organisation', 'constance'], why: 'La boxe et l\'investissement m\'ont appris la même chose : la régularité paie.', href: '#depassement' },
-    { name: 'Sang-froid', syns: ['sang froid', 'sangfroid', 'calme', 'gestion du stress', 'stress', 'pression', 'maitrise de soi', 'maitrise'], why: 'Monter sur un ring devant 400 personnes, ça relativise une réunion tendue.', href: '#depassement' },
-    { name: 'Ouverture d\'esprit', syns: ['ouverture', 'international', 'tolerance', 'diversite', 'ouvert'], why: 'Un double diplôme au Québec, loin de mes repères : observer avant de juger.', href: '#international' },
-    { name: 'Curiosité', syns: ['apprendre', 'apprentissage', 'decouverte', 'soif d apprendre', 'curieux'], why: 'Comprendre comment chaque chose fonctionne, des marchés aux personnes.', href: '#investissement' },
-    { name: 'Énergie', syns: ['dynamisme', 'enthousiasme', 'motivation', 'punch', 'dynamique', 'passion'], why: 'Student Marketeer Red Bull : l\'énergie, c\'est littéralement le métier.', href: '#redbull' },
-    { name: 'Patience', syns: ['long terme', 'temps long', 'temperance'], why: 'Investir sur la durée m\'a appris que le temps travaille pour moi.', href: '#investissement' },
-    { name: 'Humilité', syns: ['modestie', 'remise en question', 'humble'], why: 'Nouvelle culture, nouvel accent : j\'ai réappris à écouter avant de parler.', href: '#international' },
-    { name: 'Adaptabilité', syns: ['flexibilite', 'agilite', 'polyvalence', 'adaptation', 'souplesse', 'agile'], why: 'Terrain, imprévus, publics différents : je m\'ajuste vite et avec le sourire.', href: '#redbull' },
-    { name: 'Dépassement de soi', syns: ['depassement', 'ambition', 'perseverance', 'resilience', 'determination', 'courage', 'travail', 'effort', 'combativite', 'volonte'], why: 'Victoire par TKO au premier round : la peur se travaille comme un muscle.', href: '#depassement' },
-    { name: 'Transmettre', syns: ['transmission', 'pedagogie', 'partage', 'enseigner', 'partager'], why: 'Ambassadeur UJM : donner envie à d\'autres de tenter l\'aventure.', href: '#ujm' },
-    { name: 'Confiance', syns: ['deleguer', 'delegation', 'fiabilite', 'loyaute', 'fiable', 'honnetete', 'integrite'], why: 'Déléguer sans lâcher : la grande leçon de mon année de présidence.', href: '#bde' },
-    { name: 'Contact humain', syns: ['contact', 'relationnel', 'communication', 'humain', 'sociabilite', 'relation', 'social', 'convivialite'], why: 'Aller vers les gens et sentir l\'énergie d\'un groupe, c\'est ce que je préfère.', href: '#redbull' },
-    { name: 'Vision stratégique', syns: ['vision', 'strategie', 'strategique', 'anticipation', 'vision long terme', 'prise de recul'], why: 'Comprendre comment une entreprise crée vraiment de la valeur, avant d\'agir.', href: '#investissement' },
-    { name: 'Lucidité', syns: ['recul', 'esprit critique', 'analyse', 'objectivite', 'pragmatisme', 'honnetete intellectuelle'], why: 'Accepter de me tromper, l\'assumer, et en tirer quelque chose.', href: '#depassement' }
+    { name: 'Écoute', syns: ['empathie', 'comprehension', 'bienveillance', 'attention aux autres', 'respect', 'dialogue', 'disponibilite', 'gentillesse', 'attentif'], why: 'Animer une Fresque du Climat m\'a appris à écouter avant de vouloir convaincre.', href: '#engagement' },
+    { name: 'Fédérer', syns: ['leadership', 'leader', 'equipe', 'esprit d equipe', 'cohesion', 'collectif', 'management', 'manager', 'team spirit', 'entraide', 'solidarite', 'unir', 'rassembler', 'mobiliser', 'cooperation', 'collaboration', 'collaboratif', 'travail d equipe'], why: 'Un an à la tête du BDE GACO : 10 personnes, 40 événements, un seul collectif.', href: '#bde' },
+    { name: 'Discipline', syns: ['rigueur', 'rigoureux', 'regularite', 'serieux', 'organisation', 'organise', 'constance', 'ponctualite', 'ponctuel', 'assiduite', 'methode', 'methodique', 'professionnalisme', 'exigence', 'travail bien fait'], why: 'La boxe et l\'investissement m\'ont appris la même chose : la régularité paie.', href: '#depassement' },
+    { name: 'Sang-froid', syns: ['sang froid', 'sangfroid', 'calme', 'gestion du stress', 'stress', 'pression', 'maitrise de soi', 'maitrise', 'self control', 'gestion de crise', 'zen', 'serenite', 'resistance au stress'], why: 'Monter sur un ring devant 400 personnes, ça relativise une réunion tendue.', href: '#depassement' },
+    { name: 'Ouverture d\'esprit', syns: ['ouverture', 'international', 'tolerance', 'diversite', 'ouvert', 'multiculturel', 'interculturel', 'inclusion', 'voyage', 'ouvert d esprit'], why: 'Un double diplôme au Québec, loin de mes repères : observer avant de juger.', href: '#international' },
+    { name: 'Curiosité', syns: ['apprendre', 'apprentissage', 'decouverte', 'soif d apprendre', 'curieux', 'creativite', 'creatif', 'innovation', 'innovant', 'imagination', 'veille', 'apprendre vite', 'esprit d innovation'], why: 'Comprendre comment chaque chose fonctionne, des marchés aux personnes.', href: '#investissement' },
+    { name: 'Énergie', syns: ['dynamisme', 'dynamique', 'enthousiasme', 'motivation', 'motive', 'punch', 'passion', 'passionne', 'proactivite', 'proactif', 'entrain', 'peps', 'vitalite', 'implication', 'bonne humeur', 'sourire', 'positif', 'positivite', 'optimisme', 'optimiste', 'joie de vivre', 'engagement'], why: 'Student Marketeer Red Bull : l\'énergie, c\'est littéralement le métier.', href: '#redbull' },
+    { name: 'Patience', syns: ['long terme', 'temps long', 'temperance', 'patient', 'endurance'], why: 'Investir sur la durée m\'a appris que le temps travaille pour moi.', href: '#investissement' },
+    { name: 'Humilité', syns: ['modestie', 'modeste', 'remise en question', 'humble', 'simplicite', 'apprendre de ses erreurs', 'remise en cause'], why: 'Nouvelle culture, nouvel accent : j\'ai réappris à écouter avant de parler.', href: '#international' },
+    { name: 'Adaptabilité', syns: ['flexibilite', 'flexible', 'agilite', 'agile', 'polyvalence', 'polyvalent', 'adaptation', 'souplesse', 'reactivite', 'reactif', 'gestion du changement', 'changement', 'debrouillardise', 'debrouillard'], why: 'Terrain, imprévus, publics différents : je m\'ajuste vite et avec le sourire.', href: '#redbull' },
+    { name: 'Dépassement de soi', syns: ['depassement', 'ambition', 'ambitieux', 'perseverance', 'perseverant', 'resilience', 'resilient', 'determination', 'determine', 'courage', 'courageux', 'travail', 'travailleur', 'effort', 'combativite', 'volonte', 'audace', 'audacieux', 'gout du defi', 'defi', 'challenge', 'tenacite', 'tenace', 'ne rien lacher', 'grinta', 'competitif', 'gagneur'], why: 'Victoire par TKO au premier round : la peur se travaille comme un muscle.', href: '#depassement' },
+    { name: 'Transmettre', syns: ['transmission', 'pedagogie', 'pedagogue', 'partage', 'partager', 'enseigner', 'mentorat', 'former', 'formation', 'accompagnement', 'aider les autres', 'aider'], why: 'Ambassadeur UJM : donner envie à d\'autres de tenter l\'aventure.', href: '#ujm' },
+    { name: 'Confiance', syns: ['deleguer', 'delegation', 'fiabilite', 'fiable', 'loyaute', 'loyal', 'honnetete', 'honnete', 'integrite', 'integre', 'autonomie', 'autonome', 'responsabilite', 'responsable', 'transparence', 'franchise', 'franc', 'droiture', 'sincerite', 'sincere', 'parole tenue'], why: 'Déléguer sans lâcher : la grande leçon de mon année de présidence.', href: '#bde' },
+    { name: 'Contact humain', syns: ['contact', 'relationnel', 'communication', 'communicant', 'humain', 'sociabilite', 'sociable', 'relation', 'social', 'convivialite', 'networking', 'reseautage', 'aisance relationnelle', 'sens du contact', 'sympathie', 'sympathique', 'chaleureux', 'extraverti', 'charisme', 'charismatique'], why: 'Aller vers les gens et sentir l\'énergie d\'un groupe, c\'est ce que je préfère.', href: '#redbull' },
+    { name: 'Vision stratégique', syns: ['vision', 'strategie', 'strategique', 'anticipation', 'anticiper', 'vision long terme', 'prise de decision', 'decision', 'esprit d entreprise', 'entrepreneuriat', 'entrepreneur', 'business', 'vision globale', 'hauteur de vue', 'priorisation', 'esprit de synthese', 'synthese'], why: 'Comprendre comment une entreprise crée vraiment de la valeur, avant d\'agir.', href: '#investissement' },
+    { name: 'Lucidité', syns: ['recul', 'esprit critique', 'analyse', 'analytique', 'esprit d analyse', 'objectivite', 'objectif', 'pragmatisme', 'pragmatique', 'honnetete intellectuelle', 'realisme', 'realiste', 'discernement', 'bon sens', 'prise de recul', 'intelligence'], why: 'Accepter de me tromper, l\'assumer, et en tirer quelque chose.', href: '#depassement' }
   ];
 
   function normalize(str) {
@@ -845,9 +848,31 @@ document.addEventListener('DOMContentLoaded', function () {
       .map(function (w) { return w.length > 3 ? w.replace(/s$/, '') : w; })
       .join(' ');
   }
+  function lev(a, b) {
+    if (Math.abs(a.length - b.length) > 2) return 99;
+    var m = [], i, j;
+    for (i = 0; i <= b.length; i++) { m[i] = [i]; }
+    for (j = 0; j <= a.length; j++) { m[0][j] = j; }
+    for (i = 1; i <= b.length; i++) {
+      for (j = 1; j <= a.length; j++) {
+        m[i][j] = Math.min(m[i - 1][j] + 1, m[i][j - 1] + 1, m[i - 1][j - 1] + (b.charAt(i - 1) === a.charAt(j - 1) ? 0 : 1));
+      }
+    }
+    return m[b.length][a.length];
+  }
+  function bigrams(s) { var r = [], i; for (i = 0; i < s.length - 1; i++) { r.push(s.substr(i, 2)); } return r; }
+  function dice(a, b) {
+    if (a === b) return 1;
+    if (a.length < 2 || b.length < 2) return 0;
+    var A = bigrams(a), B = bigrams(b), inter = 0, used = {};
+    A.forEach(function (x) {
+      for (var i = 0; i < B.length; i++) { if (!used[i] && B[i] === x) { used[i] = 1; inter++; break; } }
+    });
+    return (2 * inter) / (A.length + B.length);
+  }
 
   /* build the card grid */
-  var found = 0, score = 0, misses = 0, hinted = false;
+  var found = 0, score = 0, shownScore = 0, streak = 0, missStreak = 0;
   VALUES.forEach(function (v, i) {
     v.norm = normalize(v.name);
     v.normSyns = v.syns.map(normalize);
@@ -862,22 +887,111 @@ document.addEventListener('DOMContentLoaded', function () {
     v.card = card;
   });
 
+  /* ---------- particle VFX (canvas overlay) ---------- */
+  var fxCanvas = null, fxCtx = null, fxParts = [], fxRunning = false;
+  var reduceFx = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function ensureFx() {
+    if (fxCanvas) return;
+    fxCanvas = document.createElement('canvas');
+    fxCanvas.className = 'vg-fx';
+    document.body.appendChild(fxCanvas);
+    fxCtx = fxCanvas.getContext('2d');
+    resizeFx();
+    window.addEventListener('resize', resizeFx);
+  }
+  function resizeFx() { fxCanvas.width = window.innerWidth; fxCanvas.height = window.innerHeight; }
+  function burst(x, y, n, colors) {
+    if (reduceFx) return;
+    ensureFx();
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * 7.5;
+      fxParts.push({
+        x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 3.2,
+        life: 0.9 + Math.random() * 0.5, size: 3.5 + Math.random() * 5.5,
+        c: colors[i % colors.length], rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.35
+      });
+    }
+    if (!fxRunning) { fxRunning = true; requestAnimationFrame(stepFx); }
+  }
+  function stepFx() {
+    fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+    fxParts = fxParts.filter(function (p) { return p.life > 0; });
+    fxParts.forEach(function (p) {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.26; p.vx *= 0.985; p.life -= 0.018; p.rot += p.vr;
+      fxCtx.save();
+      fxCtx.globalAlpha = Math.max(Math.min(p.life, 1), 0);
+      fxCtx.translate(p.x, p.y);
+      fxCtx.rotate(p.rot);
+      fxCtx.fillStyle = p.c;
+      fxCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.62);
+      fxCtx.restore();
+    });
+    if (fxParts.length) { requestAnimationFrame(stepFx); }
+    else { fxRunning = false; fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height); }
+  }
+  var FX_COLORS = ['#ff6b45', '#ffb930', '#3654ff', '#7ee2a8', '#ffffff'];
+  function centerOf(el) {
+    var r = el.getBoundingClientRect();
+    var vh = window.innerHeight || 800;
+    if (r.bottom < 0 || r.top > vh) { r = input.getBoundingClientRect(); }
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+  function floatPts(el, text) {
+    if (reduceFx) return;
+    var c = centerOf(el);
+    var f = document.createElement('div');
+    f.className = 'vg-float';
+    f.textContent = text;
+    f.style.left = (c.x - 30 + (Math.random() - 0.5) * 40) + 'px';
+    f.style.top = (c.y - 20) + 'px';
+    document.body.appendChild(f);
+    setTimeout(function () { if (f.parentNode) f.parentNode.removeChild(f); }, 1200);
+  }
+
+  /* ---------- HUD ---------- */
+  var LEVELS = [[0, 'Niv. 1 · Observateur'], [4, 'Niv. 2 · Analyste'], [8, 'Niv. 3 · Chasseur de talents'], [12, 'Niv. 4 · DRH d\'élite'], [16, 'Niv. MAX · Match parfait']];
+  function levelName() {
+    var name = LEVELS[0][1];
+    LEVELS.forEach(function (l) { if (found >= l[0]) name = l[1]; });
+    return name;
+  }
+  function percentile() {
+    return Math.min(99, Math.round(16 + found * 4.3 + Math.min(score, 1400) / 60));
+  }
+  function animateScore() {
+    var from = shownScore, to = score, t0 = performance.now();
+    (function step(now) {
+      var p = Math.min((now - t0) / 600, 1);
+      var e = 1 - Math.pow(1 - p, 3);
+      shownScore = Math.round(from + (to - from) * e);
+      if (scoreEl) scoreEl.textContent = shownScore;
+      if (p < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+  function updateHud() {
+    if (foundEl) foundEl.textContent = found + '/' + VALUES.length;
+    if (barEl) barEl.style.width = (found / VALUES.length * 100) + '%';
+    if (levelEl) levelEl.textContent = levelName();
+    if (rankEl) rankEl.textContent = found > 0 ? 'Top ' + Math.max(100 - percentile(), 1) + ' %' : '—';
+    animateScore();
+  }
   function setFeedback(msg, cls) {
     if (!feedback) return;
     feedback.textContent = msg;
     feedback.className = 'vg-feedback' + (cls ? ' ' + cls : '');
   }
-  function updateCounters() {
-    if (scoreEl) scoreEl.textContent = score;
-    if (foundEl) foundEl.textContent = found + '/' + VALUES.length;
-  }
-  function revealCard(v, pts) {
+
+  function revealCard(v, pts, exact) {
     v.found = true;
     found++;
     v.card.classList.add('found', 'flash');
+    if (exact) v.card.classList.add('exact');
     var ptsEl = v.card.querySelector('.vg-pts');
     if (ptsEl && pts) ptsEl.textContent = '+' + pts + ' pts';
-    setTimeout(function () { v.card.classList.remove('flash'); }, 600);
+    setTimeout(function () { v.card.classList.remove('flash'); }, 650);
+    var c = centerOf(v.card);
+    burst(c.x, c.y, exact ? 42 : 26, FX_COLORS);
+    if (pts) floatPts(v.card, '+' + pts);
   }
   function giveHint() {
     var left = VALUES.filter(function (v) { return !v.found && !v.hintShown; });
@@ -888,55 +1002,89 @@ document.addEventListener('DOMContentLoaded', function () {
     if (letterEl) letterEl.textContent = 'Indice : « ' + pick.name.charAt(0) + '… »';
   }
 
-  var missMsgs = [
-    'Pas dans mes 16 cartes. Tente un autre angle (humain, rigueur, vision…) !',
-    'Bonne idée, mais pas chez moi. Pense terrain, ring, marchés, Québec…',
-    'Pas celle-là. Qu\'est-ce qui compte quand tout part de travers ?'
-  ];
+  /* ---------- generous matcher: exact > synonym > fuzzy > association ---------- */
+  function bestMatch(guess) {
+    var i, j, v;
+    for (i = 0; i < VALUES.length; i++) {
+      if (VALUES[i].norm === guess) return { v: VALUES[i], tier: 1 };
+    }
+    for (i = 0; i < VALUES.length; i++) {
+      if (VALUES[i].normSyns.indexOf(guess) !== -1) return { v: VALUES[i], tier: 2 };
+    }
+    var best = null, bestScore = 0;
+    for (i = 0; i < VALUES.length; i++) {
+      v = VALUES[i];
+      var cands = [v.norm].concat(v.normSyns);
+      for (j = 0; j < cands.length; j++) {
+        var d = dice(guess, cands[j]);
+        if (guess.length >= 5 && cands[j].length >= 5 && lev(guess, cands[j]) <= 2) d = Math.max(d, 0.9);
+        if (cands[j].indexOf(guess) === 0 && guess.length >= 4) d = Math.max(d, 0.8);
+        if (d > bestScore) { bestScore = d; best = v; }
+      }
+    }
+    if (best && bestScore >= 0.62) return { v: best, tier: 3 };
+    if (best && bestScore >= 0.42) return { v: best, tier: 4 };
+    return null;
+  }
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    var guess = normalize(input.value);
+    var raw = input.value.trim();
+    var guess = normalize(raw);
     input.value = '';
     if (!guess) return;
-    var exact = null, close = null;
-    VALUES.forEach(function (v) {
-      if (v.norm === guess) exact = exact || v;
-      else if (v.normSyns.indexOf(guess) !== -1) close = close || v;
-    });
-    var hit = exact || close;
-    if (hit && hit.found) {
-      setFeedback('« ' + hit.name + ' » est déjà retournée — vise une carte encore cachée.', '');
+    var m = bestMatch(guess);
+
+    if (m && m.v.found) {
+      setFeedback('« ' + m.v.name + ' » est déjà retournée — on pense pareil. Tente une carte encore cachée !', '');
       return;
     }
-    if (hit) {
-      var pts = exact ? 100 : 70;
-      score += pts;
-      revealCard(hit, pts);
-      updateCounters();
-      if (found === VALUES.length) {
-        setFeedback('🏆 16/16, score ' + score + ' pts. On est clairement alignés : descends jusqu\'au contact.', 'ok');
-      } else if (exact) {
-        setFeedback('✔ En plein dans le mille : « ' + hit.name + ' » (+100 pts).', 'ok');
-      } else {
-        setFeedback('✔ Bien vu, ça correspond à « ' + hit.name + ' » (+70 pts).', 'ok');
-      }
+    if (!m) {
+      missStreak++;
+      streak = 0;
+      form.classList.remove('shake');
+      void form.offsetWidth;
+      form.classList.add('shake');
+      setFeedback('🤔 Je ne vois pas encore le lien avec « ' + raw + ' »… vise un trait humain (ex : rigueur, audace, vision).', 'miss');
+      if (missStreak % 2 === 0) giveHint();
+      return;
+    }
+
+    missStreak = 0;
+    streak++;
+    var base = m.tier === 1 ? 100 : m.tier === 2 ? 80 : m.tier === 3 ? 60 : 40;
+    var combo = streak >= 3;
+    var pts = combo ? Math.round(base * 1.5) : base;
+    score += pts;
+    revealCard(m.v, pts, m.tier === 1);
+    updateHud();
+
+    var comboTxt = combo ? ' 🔥 Combo ×1,5 !' : '';
+    var rankTxt = ' Tu fais mieux que ' + percentile() + ' % des visiteurs.';
+    if (found === VALUES.length) {
+      setFeedback('🏆 16/16 — ' + score + ' pts. Top ' + Math.max(100 - percentile(), 1) + ' % des visiteurs. On est faits pour s\'entendre : descends jusqu\'au contact !', 'ok');
+      var c = centerOf(form);
+      burst(c.x, c.y, 90, FX_COLORS);
+    } else if (m.tier === 1) {
+      setFeedback('💥 En plein dans le mille : « ' + m.v.name + ' » (+' + pts + ' pts).' + comboTxt + rankTxt, 'ok');
+    } else if (m.tier === 2) {
+      setFeedback('✔ Ça me ressemble : je range « ' + raw + ' » avec « ' + m.v.name + ' » (+' + pts + ' pts).' + comboTxt + rankTxt, 'ok');
+    } else if (m.tier === 3) {
+      setFeedback('👌 Bien vu, ça rejoint « ' + m.v.name + ' » chez moi (+' + pts + ' pts).' + comboTxt + rankTxt, 'ok');
     } else {
-      misses++;
-      setFeedback(missMsgs[(misses - 1) % missMsgs.length], 'miss');
-      if (misses % 3 === 0) giveHint();
+      setFeedback('🧭 Je vois l\'idée — pour moi, ça touche à « ' + m.v.name + ' » (+' + pts + ' pts).' + comboTxt + rankTxt, 'ok');
     }
   });
 
   if (revealBtn) {
     revealBtn.addEventListener('click', function () {
-      VALUES.forEach(function (v) { if (!v.found) revealCard(v, 0); });
-      updateCounters();
+      VALUES.forEach(function (v) { if (!v.found) { v.found = true; found++; v.card.classList.add('found'); } });
+      updateHud();
       setFeedback('Les 16 valeurs sont révélées — clique sur une carte pour explorer le chapitre associé.', '');
     });
   }
 
-  /* card links are created after load: route them through Lenis */
+  /* card links are injected after load: route them through Lenis */
   grid.addEventListener('click', function (e) {
     var a = e.target.closest('a[href^="#"]');
     if (!a) return;

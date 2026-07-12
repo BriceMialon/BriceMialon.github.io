@@ -42,7 +42,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=10">
+<link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
 
@@ -124,17 +124,22 @@
       <p class="muted">Un CV dit ce que j'ai fait. Ce qui suit dit qui je suis, comment je fonctionne avec les autres, et ce qui compte vraiment pour moi.</p>
     </div>
     <div class="values-game reveal" id="valuesGame">
-      <div class="vg-head">
-        <p class="vg-question">🎯 Mini-jeu&nbsp;: selon toi, qu'est-ce qui compte le plus en entreprise&nbsp;?</p>
+      <div class="vg-hud">
+        <div class="vg-hud-glow" aria-hidden="true"></div>
+        <p class="vg-title">🎮 Mini-jeu&nbsp;: devine ce qui me définit</p>
+        <p class="vg-sub">Tape les qualités que tu attends d'un futur collègue ou stagiaire. Si ça me ressemble — et il y a de grandes chances —, la carte se retourne et je t'explique pourquoi.</p>
         <form class="vg-form" id="vgForm" autocomplete="off">
-          <input type="text" id="vgInput" maxlength="40" placeholder="Tape un mot… (ex&nbsp;: écoute, rigueur, équipe)" aria-label="Propose une valeur">
-          <button type="submit" class="btn btn-primary btn-sm">Tester</button>
+          <input type="text" id="vgInput" maxlength="40" placeholder="Ex&nbsp;: écoute, rigueur, audace…" aria-label="Propose une qualité">
+          <button type="submit" class="btn btn-primary btn-sm">Jouer</button>
         </form>
-        <div class="vg-status">
-          <span class="vg-feedback" id="vgFeedback">16 valeurs me définissent. Devine-les&nbsp;: plus le mot est juste, plus tu marques.</span>
-        </div>
-        <div class="vg-status">
-          <span class="vg-metrics">Score&nbsp;: <b id="vgScore">0</b> pts · <span id="vgFoundCount">0/16</span> trouvées</span>
+        <p class="vg-feedback" id="vgFeedback">16 cartes cachées. À toi de jouer.</p>
+        <div class="vg-hud-row">
+          <div class="vg-stat"><span class="vg-stat-label">Score</span><b id="vgScore">0</b></div>
+          <div class="vg-progress">
+            <div class="vg-progress-top"><span id="vgLevel">Niv. 1 · Observateur</span><span id="vgFoundCount">0/16</span></div>
+            <div class="vg-bar"><span id="vgBar"></span></div>
+          </div>
+          <div class="vg-stat vg-rank"><span class="vg-stat-label">Classement</span><b id="vgRank">—</b></div>
           <button type="button" class="vg-reveal" id="vgReveal">Tout révéler</button>
         </div>
       </div>
@@ -473,6 +478,6 @@
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
-<script src="script.js?v=10"></script>
+<script src="script.js?v=11"></script>
 </body>
 </html>
