@@ -861,22 +861,22 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!grid || !form || !input) return;
 
   var VALUES = [
-    { name: 'Écoute', syns: ['empathie', 'comprehension', 'bienveillance', 'attention aux autres', 'respect', 'dialogue', 'disponibilite', 'gentillesse', 'attentif'], why: 'Animer une Fresque du Climat m\'a appris à écouter avant de vouloir convaincre.', href: '#engagement' },
-    { name: 'Fédérer', syns: ['leadership', 'leader', 'equipe', 'esprit d equipe', 'cohesion', 'collectif', 'management', 'manager', 'team spirit', 'entraide', 'solidarite', 'unir', 'rassembler', 'mobiliser', 'cooperation', 'collaboration', 'collaboratif', 'travail d equipe'], why: 'Un an à la tête du BDE GACO : 10 personnes, 40 événements, un seul collectif.', href: '#bde' },
-    { name: 'Discipline', syns: ['rigueur', 'rigoureux', 'regularite', 'serieux', 'organisation', 'organise', 'constance', 'ponctualite', 'ponctuel', 'assiduite', 'methode', 'methodique', 'professionnalisme', 'exigence', 'travail bien fait'], why: 'La boxe et l\'investissement m\'ont appris la même chose : la régularité paie.', href: '#depassement' },
-    { name: 'Sang-froid', syns: ['sang froid', 'sangfroid', 'calme', 'gestion du stress', 'stress', 'pression', 'maitrise de soi', 'maitrise', 'self control', 'gestion de crise', 'zen', 'serenite', 'resistance au stress'], why: 'Monter sur un ring devant 400 personnes, ça relativise une réunion tendue.', href: '#depassement' },
-    { name: 'Ouverture d\'esprit', syns: ['ouverture', 'international', 'tolerance', 'diversite', 'ouvert', 'multiculturel', 'interculturel', 'inclusion', 'voyage', 'ouvert d esprit'], why: 'Un double diplôme au Québec, loin de mes repères : observer avant de juger.', href: '#international' },
-    { name: 'Curiosité', syns: ['apprendre', 'apprentissage', 'decouverte', 'soif d apprendre', 'curieux', 'creativite', 'creatif', 'innovation', 'innovant', 'imagination', 'veille', 'apprendre vite', 'esprit d innovation'], why: 'Comprendre comment chaque chose fonctionne, des marchés aux personnes.', href: '#investissement' },
-    { name: 'Énergie', syns: ['dynamisme', 'dynamique', 'enthousiasme', 'motivation', 'motive', 'punch', 'passion', 'passionne', 'proactivite', 'proactif', 'entrain', 'peps', 'vitalite', 'implication', 'bonne humeur', 'sourire', 'positif', 'positivite', 'optimisme', 'optimiste', 'joie de vivre', 'engagement'], why: 'Student Marketeer Red Bull : l\'énergie, c\'est littéralement le métier.', href: '#redbull' },
-    { name: 'Patience', syns: ['long terme', 'temps long', 'temperance', 'patient', 'endurance'], why: 'Investir sur la durée m\'a appris que le temps travaille pour moi.', href: '#investissement' },
-    { name: 'Humilité', syns: ['modestie', 'modeste', 'remise en question', 'humble', 'simplicite', 'apprendre de ses erreurs', 'remise en cause'], why: 'Nouvelle culture, nouvel accent : j\'ai réappris à écouter avant de parler.', href: '#international' },
-    { name: 'Adaptabilité', syns: ['flexibilite', 'flexible', 'agilite', 'agile', 'polyvalence', 'polyvalent', 'adaptation', 'souplesse', 'reactivite', 'reactif', 'gestion du changement', 'changement', 'debrouillardise', 'debrouillard'], why: 'Terrain, imprévus, publics différents : je m\'ajuste vite et avec le sourire.', href: '#redbull' },
-    { name: 'Dépassement de soi', syns: ['depassement', 'ambition', 'ambitieux', 'perseverance', 'perseverant', 'resilience', 'resilient', 'determination', 'determine', 'courage', 'courageux', 'travail', 'travailleur', 'effort', 'combativite', 'volonte', 'audace', 'audacieux', 'gout du defi', 'defi', 'challenge', 'tenacite', 'tenace', 'ne rien lacher', 'grinta', 'competitif', 'gagneur'], why: 'Victoire par TKO au premier round : la peur se travaille comme un muscle.', href: '#depassement' },
-    { name: 'Transmettre', syns: ['transmission', 'pedagogie', 'pedagogue', 'partage', 'partager', 'enseigner', 'mentorat', 'former', 'formation', 'accompagnement', 'aider les autres', 'aider'], why: 'Ambassadeur UJM : donner envie à d\'autres de tenter l\'aventure.', href: '#ujm' },
-    { name: 'Confiance', syns: ['deleguer', 'delegation', 'fiabilite', 'fiable', 'loyaute', 'loyal', 'honnetete', 'honnete', 'integrite', 'integre', 'autonomie', 'autonome', 'responsabilite', 'responsable', 'transparence', 'franchise', 'franc', 'droiture', 'sincerite', 'sincere', 'parole tenue'], why: 'Déléguer sans lâcher : la grande leçon de mon année de présidence.', href: '#bde' },
-    { name: 'Contact humain', syns: ['contact', 'relationnel', 'communication', 'communicant', 'humain', 'sociabilite', 'sociable', 'relation', 'social', 'convivialite', 'networking', 'reseautage', 'aisance relationnelle', 'sens du contact', 'sympathie', 'sympathique', 'chaleureux', 'extraverti', 'charisme', 'charismatique'], why: 'Aller vers les gens et sentir l\'énergie d\'un groupe, c\'est ce que je préfère.', href: '#redbull' },
-    { name: 'Vision stratégique', syns: ['vision', 'strategie', 'strategique', 'anticipation', 'anticiper', 'vision long terme', 'prise de decision', 'decision', 'esprit d entreprise', 'entrepreneuriat', 'entrepreneur', 'business', 'vision globale', 'hauteur de vue', 'priorisation', 'esprit de synthese', 'synthese'], why: 'Comprendre comment une entreprise crée vraiment de la valeur, avant d\'agir.', href: '#investissement' },
-    { name: 'Lucidité', syns: ['recul', 'esprit critique', 'analyse', 'analytique', 'esprit d analyse', 'objectivite', 'objectif', 'pragmatisme', 'pragmatique', 'honnetete intellectuelle', 'realisme', 'realiste', 'discernement', 'bon sens', 'prise de recul', 'intelligence'], why: 'Accepter de me tromper, l\'assumer, et en tirer quelque chose.', href: '#depassement' }
+    { name: 'Écoute', clue: 'On l\'offre en se taisant : comprendre l\'autre avant de lui répondre.', syns: ['empathie', 'comprehension', 'bienveillance', 'attention aux autres', 'respect', 'dialogue', 'disponibilite', 'gentillesse', 'attentif'], why: 'Animer une Fresque du Climat m\'a appris à écouter avant de vouloir convaincre.', href: '#engagement' },
+    { name: 'Fédérer', clue: 'Transformer dix individualités en une seule équipe qui avance ensemble.', syns: ['leadership', 'leader', 'equipe', 'esprit d equipe', 'cohesion', 'collectif', 'management', 'manager', 'team spirit', 'entraide', 'solidarite', 'unir', 'rassembler', 'mobiliser', 'cooperation', 'collaboration', 'collaboratif', 'travail d equipe'], why: 'Un an à la tête du BDE GACO : 10 personnes, 40 événements, un seul collectif.', href: '#bde' },
+    { name: 'Discipline', clue: 'S\'entraîner même quand personne ne regarde, et être à l\'heure quand tout le monde regarde.', syns: ['rigueur', 'rigoureux', 'regularite', 'serieux', 'organisation', 'organise', 'constance', 'ponctualite', 'ponctuel', 'assiduite', 'methode', 'methodique', 'professionnalisme', 'exigence', 'travail bien fait'], why: 'La boxe et l\'investissement m\'ont appris la même chose : la régularité paie.', href: '#depassement' },
+    { name: 'Sang-froid', clue: 'Garder la tête claire quand la pression monte et que tout s\'accélère.', syns: ['sang froid', 'sangfroid', 'calme', 'gestion du stress', 'stress', 'pression', 'maitrise de soi', 'maitrise', 'self control', 'gestion de crise', 'zen', 'serenite', 'resistance au stress'], why: 'Monter sur un ring devant 400 personnes, ça relativise une réunion tendue.', href: '#depassement' },
+    { name: 'Ouverture d\'esprit', clue: 'Partir loin de ses repères et accueillir ce qui est différent sans juger.', syns: ['ouverture', 'international', 'tolerance', 'diversite', 'ouvert', 'multiculturel', 'interculturel', 'inclusion', 'voyage', 'ouvert d esprit'], why: 'Un double diplôme au Québec, loin de mes repères : observer avant de juger.', href: '#international' },
+    { name: 'Curiosité', clue: 'L\'envie d\'apprendre et de comprendre comment tout fonctionne, encore et encore.', syns: ['apprendre', 'apprentissage', 'decouverte', 'soif d apprendre', 'curieux', 'creativite', 'creatif', 'innovation', 'innovant', 'imagination', 'veille', 'apprendre vite', 'esprit d innovation'], why: 'Comprendre comment chaque chose fonctionne, des marchés aux personnes.', href: '#investissement' },
+    { name: 'Énergie', clue: 'Ce que Red Bull est censé donner, et que j\'apporte déjà au réveil.', syns: ['dynamisme', 'dynamique', 'enthousiasme', 'motivation', 'motive', 'punch', 'passion', 'passionne', 'proactivite', 'proactif', 'entrain', 'peps', 'vitalite', 'implication', 'bonne humeur', 'sourire', 'positif', 'positivite', 'optimisme', 'optimiste', 'joie de vivre', 'engagement'], why: 'Student Marketeer Red Bull : l\'énergie, c\'est littéralement le métier.', href: '#redbull' },
+    { name: 'Patience', clue: 'Laisser le temps faire son travail plutôt que de tout vouloir tout de suite.', syns: ['long terme', 'temps long', 'temperance', 'patient', 'endurance'], why: 'Investir sur la durée m\'a appris que le temps travaille pour moi.', href: '#investissement' },
+    { name: 'Humilité', clue: 'Savoir dire « je ne sais pas » et repartir apprendre.', syns: ['modestie', 'modeste', 'remise en question', 'humble', 'simplicite', 'apprendre de ses erreurs', 'remise en cause'], why: 'Nouvelle culture, nouvel accent : j\'ai réappris à écouter avant de parler.', href: '#international' },
+    { name: 'Adaptabilité', clue: 'Changer de plan sans changer d\'objectif quand l\'imprévu débarque.', syns: ['flexibilite', 'flexible', 'agilite', 'agile', 'polyvalence', 'polyvalent', 'adaptation', 'souplesse', 'reactivite', 'reactif', 'gestion du changement', 'changement', 'debrouillardise', 'debrouillard'], why: 'Terrain, imprévus, publics différents : je m\'ajuste vite et avec le sourire.', href: '#redbull' },
+    { name: 'Dépassement de soi', clue: 'Monter sur le ring alors que la peur dit de rester assis.', syns: ['depassement', 'ambition', 'ambitieux', 'perseverance', 'perseverant', 'resilience', 'resilient', 'determination', 'determine', 'courage', 'courageux', 'travail', 'travailleur', 'effort', 'combativite', 'volonte', 'audace', 'audacieux', 'gout du defi', 'defi', 'challenge', 'tenacite', 'tenace', 'ne rien lacher', 'grinta', 'competitif', 'gagneur'], why: 'Victoire par TKO au premier round : la peur se travaille comme un muscle.', href: '#depassement' },
+    { name: 'Transmettre', clue: 'Partager ce qu\'on sait pour donner envie aux autres d\'essayer.', syns: ['transmission', 'pedagogie', 'pedagogue', 'partage', 'partager', 'enseigner', 'mentorat', 'former', 'formation', 'accompagnement', 'aider les autres', 'aider'], why: 'Ambassadeur UJM : donner envie à d\'autres de tenter l\'aventure.', href: '#ujm' },
+    { name: 'Confiance', clue: 'Déléguer sans surveiller par-dessus l\'épaule, et tenir sa parole.', syns: ['deleguer', 'delegation', 'fiabilite', 'fiable', 'loyaute', 'loyal', 'honnetete', 'honnete', 'integrite', 'integre', 'autonomie', 'autonome', 'responsabilite', 'responsable', 'transparence', 'franchise', 'franc', 'droiture', 'sincerite', 'sincere', 'parole tenue'], why: 'Déléguer sans lâcher : la grande leçon de mon année de présidence.', href: '#bde' },
+    { name: 'Contact humain', clue: 'Aller vers les gens et créer du lien partout, tout le temps.', syns: ['contact', 'relationnel', 'communication', 'communicant', 'humain', 'sociabilite', 'sociable', 'relation', 'social', 'convivialite', 'networking', 'reseautage', 'aisance relationnelle', 'sens du contact', 'sympathie', 'sympathique', 'chaleureux', 'extraverti', 'charisme', 'charismatique'], why: 'Aller vers les gens et sentir l\'énergie d\'un groupe, c\'est ce que je préfère.', href: '#redbull' },
+    { name: 'Vision stratégique', clue: 'Voir trois coups d\'avance et comprendre où se crée vraiment la valeur.', syns: ['vision', 'strategie', 'strategique', 'anticipation', 'anticiper', 'vision long terme', 'prise de decision', 'decision', 'esprit d entreprise', 'entrepreneuriat', 'entrepreneur', 'business', 'vision globale', 'hauteur de vue', 'priorisation', 'esprit de synthese', 'synthese'], why: 'Comprendre comment une entreprise crée vraiment de la valeur, avant d\'agir.', href: '#investissement' },
+    { name: 'Lucidité', clue: 'Regarder ses erreurs en face et en tirer les bonnes conclusions.', syns: ['recul', 'esprit critique', 'analyse', 'analytique', 'esprit d analyse', 'objectivite', 'objectif', 'pragmatisme', 'pragmatique', 'honnetete intellectuelle', 'realisme', 'realiste', 'discernement', 'bon sens', 'prise de recul', 'intelligence'], why: 'Accepter de me tromper, l\'assumer, et en tirer quelque chose.', href: '#depassement' }
   ];
 
   function normalize(str) {
@@ -1112,18 +1112,24 @@ document.addEventListener('DOMContentLoaded', function () {
     pick.card.classList.remove('peek');
     void pick.card.offsetWidth;
     pick.card.classList.add('peek');
-    setFeedback('Indice : une des cartes commence par « ' + pick.name.charAt(0) + ' ». Il te reste ' + hintsLeft + ' indice' + (hintsLeft > 1 ? 's' : '') + '.', '');
+    setFeedback('Devinette : ' + pick.clue + ' (' + hintsLeft + ' indice' + (hintsLeft > 1 ? 's' : '') + ' restant' + (hintsLeft > 1 ? 's' : '') + ')', 'ok');
   }
   if (hintBtn) hintBtn.addEventListener('click', useHint);
 
   /* gentle pause toast, shown once */
+  var stuckCount = 0;
+  function nudgeIfStuck() {
+    if (stuckCount < 2) return;
+    if (hintBtn && hintsLeft > 0) hintBtn.classList.add('sparkle');
+    showPauseToast();
+  }
   var toastShown = false;
   function showPauseToast() {
     if (toastShown) return;
     toastShown = true;
     var t = document.createElement('div');
     t.className = 'vg-toast';
-    t.textContent = 'Pas de pression : continue d\'explorer le site et reviens finir le jeu quand tu veux. Le bouton Indice est là si tu bloques.';
+    t.textContent = 'Pas de pression : continue de visiter le site, chaque chapitre est un indice grandeur nature. Reviens finir le jeu quand tu veux, il t\'attend ici.';
     document.body.appendChild(t);
     requestAnimationFrame(function () { t.classList.add('show'); });
     setTimeout(function () {
@@ -1168,7 +1174,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var m = bestMatch(guess);
 
     if (m && m.v.found) {
+      stuckCount++;
       setFeedback('« ' + m.v.name + ' » est déjà retournée, on pense pareil. Tente une carte encore cachée !', '');
+      nudgeIfStuck();
       return;
     }
     if (!m) {
@@ -1177,15 +1185,14 @@ document.addEventListener('DOMContentLoaded', function () {
       form.classList.remove('shake');
       void form.offsetWidth;
       form.classList.add('shake');
+      stuckCount++;
       setFeedback('Je ne vois pas encore le lien avec « ' + raw + ' »… vise un trait humain (écoute, rigueur, audace, vision).', 'miss');
-      if (missStreak >= 2 || lastMissScore < 0.2) {
-        if (hintBtn && hintsLeft > 0) hintBtn.classList.add('sparkle');
-        showPauseToast();
-      }
+      nudgeIfStuck();
       return;
     }
 
     missStreak = 0;
+    stuckCount = 0;
     streak++;
     if (hintBtn) hintBtn.classList.remove('sparkle');
     var base = m.tier === 1 ? 100 : m.tier === 2 ? 80 : m.tier === 3 ? 60 : 40;
