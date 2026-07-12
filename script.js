@@ -685,6 +685,37 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.theme-section video, .duo-item video, .editorial-main video').forEach(function (v) {
       vio.observe(v);
     });
+    /* ---------- 06 · Investissement: trailer reveal driven by scroll.
+       The rounded "screen" expands to full-bleed as you scroll into the
+       pinned section, then the manifesto text rises out of the picture. */
+    var investSec = document.getElementById('investissement');
+    var investFrame = investSec ? investSec.querySelector('.invest-frame') : null;
+    var investContent = investSec ? investSec.querySelector('.invest-content') : null;
+    if (investSec && investFrame && investContent) {
+      var investDirty = true;
+      window.addEventListener('scroll', function () { investDirty = true; }, { passive: true });
+      window.addEventListener('resize', function () { investDirty = true; }, { passive: true });
+      (function investLoop() {
+        if (investDirty) {
+          investDirty = false;
+          var vh2 = window.innerHeight || document.documentElement.clientHeight;
+          var rI = investSec.getBoundingClientRect();
+          var total = rI.height - vh2;
+          if (total > 0 && rI.top < vh2 && rI.bottom > 0) {
+            var p = Math.min(Math.max(-rI.top / total, 0), 1);
+            var pe = Math.min(p / 0.55, 1);
+            var ease = 1 - Math.pow(1 - pe, 3); /* screen expansion */
+            investFrame.style.transform = 'scale(' + (0.62 + 0.38 * ease).toFixed(4) + ')';
+            investFrame.style.borderRadius = ((1 - ease) * 42).toFixed(1) + 'px';
+            var tp = Math.min(Math.max((p - 0.5) / 0.3, 0), 1); /* text rise */
+            investContent.style.opacity = tp.toFixed(3);
+            investContent.style.transform = 'translateY(' + ((1 - tp) * 52).toFixed(1) + 'px) scale(' + (0.95 + 0.05 * tp).toFixed(4) + ')';
+          }
+        }
+        requestAnimationFrame(investLoop);
+      })();
+    }
+
     /* gallery main media is swapped dynamically — autoplay the new video too */
     document.querySelectorAll('.gallery-thumb').forEach(function (t) {
       t.addEventListener('click', function () {
