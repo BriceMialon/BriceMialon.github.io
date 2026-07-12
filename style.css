@@ -516,3 +516,175 @@ section{position:relative;}
 .lightbox-close{position:absolute;top:22px;right:26px;width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;border:none;font-size:26px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:2001;}
 .lightbox-close:hover{background:rgba(255,255,255,.26);}
 [data-lightbox-img],[data-lightbox-video]{cursor:zoom-in;}
+
+/* ================================================================
+   CINEMATIC LAYER — preloader, smooth scroll, split-text, cursor,
+   parallax, grain, marquee. Everything below degrades gracefully:
+   without JS or with prefers-reduced-motion the site stays intact.
+   ================================================================ */
+
+/* ---------- Lenis smooth scroll ---------- */
+html.lenis,html.lenis body{height:auto;}
+.lenis.lenis-smooth{scroll-behavior:auto !important;}
+.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain;}
+.lenis.lenis-stopped{overflow:hidden;}
+
+/* ---------- Preloader (cinema opening) ---------- */
+.preloader{
+  position:fixed;inset:0;z-index:3000;background:#0a0a12;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  transition:clip-path .95s cubic-bezier(.76,0,.24,1),visibility 0s linear .95s;
+  clip-path:inset(0 0 0 0);
+}
+.preloader.done{clip-path:inset(0 0 100% 0);visibility:hidden;}
+body.is-loading{overflow:hidden;}
+.preloader-inner{text-align:center;padding:0 24px;}
+.preloader-name{font-family:var(--font-display);font-weight:800;font-size:clamp(30px,5.4vw,58px);letter-spacing:-.02em;}
+.preloader-name em{font-style:normal;color:var(--accent);}
+.preloader-tag{margin-top:10px;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);}
+.pl-mask{display:inline-block;overflow:hidden;vertical-align:top;}
+.pl-word{display:inline-block;transform:translateY(110%);animation:pl-rise .9s var(--ease) .15s forwards;}
+.pl-word-2{animation-delay:.32s;}
+@keyframes pl-rise{to{transform:translateY(0);}}
+.preloader-count{
+  position:absolute;right:36px;bottom:28px;
+  font-family:var(--font-display);font-weight:800;font-size:clamp(44px,7vw,84px);
+  color:rgba(255,255,255,.14);line-height:1;font-variant-numeric:tabular-nums;
+}
+.preloader-count::after{content:'%';font-size:.4em;vertical-align:super;}
+.preloader-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.08);}
+.preloader-bar span{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--primary),var(--accent));transition:width .3s ease;}
+
+/* ---------- Film grain ---------- */
+.grain{
+  position:fixed;inset:0;z-index:2600;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.7'/%3E%3C/svg%3E");
+  background-size:300px 300px;
+  animation:grain-shift 1.6s steps(4) infinite;
+}
+@keyframes grain-shift{
+  0%{background-position:0 0;}25%{background-position:-70px 40px;}
+  50%{background-position:40px -60px;}75%{background-position:-30px -30px;}100%{background-position:0 0;}
+}
+
+/* ---------- Custom cursor (fine pointers only, enabled by JS) ---------- */
+.cursor-dot,.cursor-ring{display:none;}
+@media (hover:hover) and (pointer:fine){
+  html.has-cursor,html.has-cursor a,html.has-cursor button,
+  html.has-cursor [data-lightbox-img],html.has-cursor [data-lightbox-video],
+  html.has-cursor .gallery-thumb,html.has-cursor .carousel,html.has-cursor .marquee-item,
+  html.has-cursor .editorial-main,html.has-cursor .editorial-inset,
+  html.has-cursor .duo-item,html.has-cursor .trio-item,html.has-cursor .gallery-main{cursor:none;}
+  html.has-cursor .cursor-dot,html.has-cursor .cursor-ring{display:flex;}
+  .cursor-dot{
+    position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;
+    background:var(--accent);z-index:4000;pointer-events:none;
+    transform:translate(-50%,-50%);will-change:transform;
+  }
+  .cursor-ring{
+    position:fixed;top:0;left:0;width:38px;height:38px;border-radius:50%;
+    border:1.5px solid rgba(255,107,69,.65);background:rgba(255,107,69,0);
+    z-index:3999;pointer-events:none;align-items:center;justify-content:center;
+    transform:translate(-50%,-50%);will-change:transform;
+    transition:width .3s var(--ease),height .3s var(--ease),background .3s ease,border-color .3s ease,opacity .3s ease;
+  }
+  .cursor-label{
+    font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:#fff;opacity:0;transition:opacity .2s ease;white-space:nowrap;
+  }
+  .cursor-ring.is-link{width:54px;height:54px;background:rgba(255,107,69,.14);}
+  .cursor-ring.is-media{width:78px;height:78px;background:rgba(10,10,18,.55);border-color:rgba(255,255,255,.35);backdrop-filter:blur(2px);}
+  .cursor-ring.is-media .cursor-label{opacity:1;}
+  .cursor-ring.is-down{transform:translate(-50%,-50%) scale(.82);}
+  .cursor-dot.is-hidden,.cursor-ring.is-hidden{opacity:0;}
+}
+
+/* ---------- Split-text (hero h1 + section h2) ---------- */
+.hw{display:inline-block;overflow:hidden;vertical-align:bottom;padding:.06em .02em .14em;margin:-.06em -.02em -.14em;}
+.hw-i{display:inline-block;transform:translateY(115%);will-change:transform;}
+h1.split,h2.split{opacity:1 !important;animation:none !important;}
+.split.play .hw-i{transform:translateY(0);transition:transform .85s var(--ease);transition-delay:calc(var(--i,0)*70ms);}
+h2.split .hw-i{transition-duration:.75s;}
+h2.split.play .hw-i{transition-delay:calc(var(--i,0)*45ms);}
+
+/* ---------- Hero cinematic zoom-out on scroll ---------- */
+.hero-immersive-bg{will-change:transform;}
+.hero-immersive-content{will-change:transform,opacity;}
+
+/* ---------- Depth parallax on media (JS drives --plx-y) ---------- */
+@property --plx-s{syntax:'<number>';inherits:false;initial-value:1.12;}
+.plx-zone{overflow:hidden;}
+.plx-zone>img,.plx-zone>video{
+  transform:translate3d(0,var(--plx-y,0px),0) scale(var(--plx-s,1.12)) !important;
+  transition:--plx-s .5s var(--ease);will-change:transform;
+}
+.plx-zone:hover>img,.plx-zone:hover>video{--plx-s:1.19;}
+
+/* ---------- Giant chapter numerals ---------- */
+.theme-section{overflow:hidden;}
+.theme-section .container{position:relative;z-index:1;}
+.theme-watermark{
+  position:absolute;top:6px;right:-14px;z-index:0;line-height:.8;
+  font-family:var(--font-display);font-weight:800;font-size:clamp(140px,24vw,320px);
+  color:transparent;-webkit-text-stroke:1.5px rgba(21,21,31,.08);
+  pointer-events:none;user-select:none;will-change:transform;
+}
+.theme-section:nth-child(even) .theme-watermark{right:auto;left:-14px;}
+@media (max-width:900px){.theme-watermark{font-size:clamp(110px,30vw,180px);opacity:.7;}}
+
+/* ---------- Nav: hide on scroll down, return on scroll up ---------- */
+.nav{transition:border-color .3s,box-shadow .3s,transform .5s var(--ease);}
+.nav.nav-hidden{transform:translateY(-102%);}
+
+/* ---------- Video overlays: hide play badge while playing ---------- */
+.is-video.playing .carousel-play,.playing .carousel-play{opacity:0;}
+.carousel-play{transition:opacity .35s ease;}
+
+/* ---------- Big pre-contact marquee ---------- */
+.big-marquee{
+  overflow:hidden;padding:64px 0 72px;background:var(--paper);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);
+}
+.big-marquee-track{
+  display:flex;width:max-content;will-change:transform;
+  animation:big-marquee-scroll 30s linear infinite;
+}
+.big-marquee-track span{
+  font-family:var(--font-display);font-weight:800;white-space:nowrap;
+  font-size:clamp(44px,7.5vw,108px);line-height:1;letter-spacing:-.02em;
+  color:transparent;-webkit-text-stroke:1.5px rgba(21,21,31,.32);
+}
+.big-marquee-track span:nth-child(odd){color:var(--ink);-webkit-text-stroke:0;}
+@keyframes big-marquee-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ---------- Lightbox: cinematic open + caption ---------- */
+.lightbox{display:flex;visibility:hidden;opacity:0;transition:opacity .35s ease,visibility 0s linear .35s;}
+.lightbox.open{visibility:visible;opacity:1;transition:opacity .35s ease;}
+.lightbox-content{flex-direction:column;gap:14px;}
+.lightbox.open .lightbox-content{animation:lb-in .5s var(--ease);}
+@keyframes lb-in{from{opacity:0;transform:scale(.94) translateY(14px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.lightbox-caption{color:rgba(255,255,255,.75);font-size:14px;font-weight:600;text-align:center;max-width:720px;}
+
+/* ---------- Contact-stage flash (JS-driven, replaces :target with Lenis) ---------- */
+#contact-stage.flash{animation:stage-target-flash 1.8s ease;}
+
+/* ---------- Section entrances: slightly longer, more filmic curve ---------- */
+.reveal{transition-duration:.9s;transition-timing-function:cubic-bezier(.22,.9,.3,1);}
+
+/* ---------- Reduced motion: switch the whole cinematic layer off ---------- */
+@media (prefers-reduced-motion:reduce){
+  .preloader{display:none !important;}
+  .grain{display:none !important;}
+  .cursor-dot,.cursor-ring{display:none !important;}
+  .hw-i{transform:none !important;transition:none !important;}
+  .big-marquee-track{animation:none !important;}
+  .plx-zone>img,.plx-zone>video{transform:none !important;}
+  .theme-watermark{transform:none !important;}
+  .nav.nav-hidden{transform:none !important;}
+}
+@media (max-width:760px){
+  .theme-watermark{top:auto;bottom:-10px;}
+  .preloader-count{right:22px;bottom:20px;}
+  .big-marquee{padding:44px 0 50px;}
+}

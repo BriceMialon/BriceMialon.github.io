@@ -10,11 +10,11 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Brice Mialon · Management de Projet & Partenariats Stratégiques">
 <meta property="og:description" content="Management de projet, partenariats stratégiques, leadership et ouverture internationale, France ⇄ Québec.">
-<meta property="og:image" content="https://brice-mialon.netlify.app/hero-panorama.jpg">
+<meta property="og:image" content="https://bricemln.github.io/hero-panorama.jpg">
 <meta property="og:locale" content="fr_FR">
-<meta property="og:url" content="https://brice-mialon.netlify.app/">
+<meta property="og:url" content="https://bricemln.github.io/">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="canonical" href="https://brice-mialon.netlify.app/">
+<link rel="canonical" href="https://bricemln.github.io/">
 <meta name="robots" content="index, follow">
 
 <script type="application/ld+json">
@@ -22,7 +22,7 @@
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Brice Mialon",
-  "url": "https://brice-mialon.netlify.app/",
+  "url": "https://bricemln.github.io/",
   "jobTitle": "Étudiant en Management de Projet",
   "description": "Management de projet, partenariats stratégiques et conseil en organisation.",
   "address": { "@type": "PostalAddress", "addressLocality": "Lyon", "addressCountry": "FR" },
@@ -45,6 +45,20 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader-inner">
+    <div class="preloader-name"><span class="pl-mask"><span class="pl-word">Brice<em>.</em>Mialon</span></span></div>
+    <div class="preloader-tag"><span class="pl-mask"><span class="pl-word pl-word-2">Portfolio — Management de projet</span></span></div>
+  </div>
+  <div class="preloader-count" id="preloaderCount">0</div>
+  <div class="preloader-bar"><span id="preloaderBar"></span></div>
+</div>
+
+<div class="grain" aria-hidden="true"></div>
+
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"><span class="cursor-label" id="cursorLabel"></span></div>
 
 <div class="scroll-progress" id="scrollProgress"></div>
 
@@ -448,6 +462,12 @@
   </div>
 </section>
 
+<div class="big-marquee" aria-hidden="true">
+  <div class="big-marquee-track">
+    <span>Travaillons ensemble&nbsp;·&nbsp;Stage avril&nbsp;→&nbsp;août 2027&nbsp;·&nbsp;</span><span>Travaillons ensemble&nbsp;·&nbsp;Stage avril&nbsp;→&nbsp;août 2027&nbsp;·&nbsp;</span><span>Travaillons ensemble&nbsp;·&nbsp;Stage avril&nbsp;→&nbsp;août 2027&nbsp;·&nbsp;</span><span>Travaillons ensemble&nbsp;·&nbsp;Stage avril&nbsp;→&nbsp;août 2027&nbsp;·&nbsp;</span>
+  </div>
+</div>
+
 <section class="contact" id="contact">
   <div class="container">
     <div class="contact-grid">
@@ -482,6 +502,7 @@
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
