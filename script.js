@@ -1091,13 +1091,45 @@ document.addEventListener('DOMContentLoaded', function () {
     burst(c.x, c.y, exact ? 42 : 26, FX_COLORS);
     if (pts) floatPts(v.card, '+' + pts);
   }
-  function giveHint() {
+  /* ---------- hints: three per game, via the Indice button ---------- */
+  var hintsLeft = 3;
+  var hintBtn = document.getElementById('vgHint');
+  var hintCountEl = document.getElementById('vgHintCount');
+  function useHint() {
+    if (hintsLeft <= 0) return;
     var left = VALUES.filter(function (v) { return !v.found && !v.hintShown; });
-    if (!left.length) return;
+    if (!left.length) { setFeedback('Toutes les cartes restantes portent déjà leur indice.', ''); return; }
+    hintsLeft--;
+    if (hintCountEl) hintCountEl.textContent = hintsLeft;
+    if (hintBtn) {
+      hintBtn.classList.remove('sparkle');
+      if (hintsLeft === 0) hintBtn.classList.add('used');
+    }
     var pick = left[Math.floor(Math.random() * left.length)];
     pick.hintShown = true;
     var letterEl = pick.card.querySelector('.vg-letter');
     if (letterEl) letterEl.textContent = 'Indice : « ' + pick.name.charAt(0) + '… »';
+    pick.card.classList.remove('peek');
+    void pick.card.offsetWidth;
+    pick.card.classList.add('peek');
+    setFeedback('Indice : une des cartes commence par « ' + pick.name.charAt(0) + ' ». Il te reste ' + hintsLeft + ' indice' + (hintsLeft > 1 ? 's' : '') + '.', '');
+  }
+  if (hintBtn) hintBtn.addEventListener('click', useHint);
+
+  /* gentle pause toast, shown once */
+  var toastShown = false;
+  function showPauseToast() {
+    if (toastShown) return;
+    toastShown = true;
+    var t = document.createElement('div');
+    t.className = 'vg-toast';
+    t.textContent = 'Pas de pression : continue d\'explorer le site et reviens finir le jeu quand tu veux. Le bouton Indice est là si tu bloques.';
+    document.body.appendChild(t);
+    requestAnimationFrame(function () { t.classList.add('show'); });
+    setTimeout(function () {
+      t.classList.remove('show');
+      setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 500);
+    }, 7500);
   }
 
   /* ---------- generous matcher: exact > synonym > fuzzy > association ---------- */
@@ -1122,8 +1154,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (best && bestScore >= 0.62) return { v: best, tier: 3 };
     if (best && bestScore >= 0.42) return { v: best, tier: 4 };
+    lastMissScore = bestScore;
     return null;
   }
+  var lastMissScore = 0;
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -1144,12 +1178,16 @@ document.addEventListener('DOMContentLoaded', function () {
       void form.offsetWidth;
       form.classList.add('shake');
       setFeedback('Je ne vois pas encore le lien avec « ' + raw + ' »… vise un trait humain (écoute, rigueur, audace, vision).', 'miss');
-      if (missStreak % 2 === 0) giveHint();
+      if (missStreak >= 2 || lastMissScore < 0.2) {
+        if (hintBtn && hintsLeft > 0) hintBtn.classList.add('sparkle');
+        showPauseToast();
+      }
       return;
     }
 
     missStreak = 0;
     streak++;
+    if (hintBtn) hintBtn.classList.remove('sparkle');
     var base = m.tier === 1 ? 100 : m.tier === 2 ? 80 : m.tier === 3 ? 60 : 40;
     var combo = streak >= 3;
     var pts = combo ? Math.round(base * 1.5) : base;
