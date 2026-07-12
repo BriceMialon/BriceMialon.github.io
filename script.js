@@ -728,6 +728,49 @@ document.addEventListener('DOMContentLoaded', function () {
       })();
     }
 
+    /* ---------- 03 · International: horizontal photo immersion.
+       Vertical scroll drives the track sideways through full-screen
+       photographs; each image gets a soft counter-parallax so the
+       journey feels layered rather than flat. */
+    var intlSec = document.querySelector('.intl-cinema');
+    var intlTrack = document.getElementById('intlTrack');
+    var intlCounter = document.getElementById('intlCounter');
+    if (intlSec && intlTrack) {
+      intlSec.classList.add('intl-on');
+      var intlPanels = Array.prototype.slice.call(intlTrack.children);
+      var intlImgs = intlPanels.map(function (p) { return p.querySelector('img'); });
+      var intlDirty = true;
+      window.addEventListener('scroll', function () { intlDirty = true; }, { passive: true });
+      window.addEventListener('resize', function () { intlDirty = true; }, { passive: true });
+      (function intlLoop() {
+        if (intlDirty) {
+          intlDirty = false;
+          var vhI = window.innerHeight || document.documentElement.clientHeight;
+          var vwI = window.innerWidth || document.documentElement.clientWidth;
+          var rI2 = intlSec.getBoundingClientRect();
+          var totalI = rI2.height - vhI;
+          if (totalI > 0 && rI2.top < vhI && rI2.bottom > 0) {
+            var pI = Math.min(Math.max(-rI2.top / totalI, 0), 1);
+            var dist = intlTrack.scrollWidth - vwI;
+            intlTrack.style.transform = 'translate3d(' + (-pI * dist).toFixed(1) + 'px,0,0)';
+            var slideF = pI * (intlPanels.length - 1);
+            for (var ii = 0; ii < intlImgs.length; ii++) {
+              if (!intlImgs[ii]) continue;
+              var rel = slideF - ii;
+              if (rel > -1.2 && rel < 1.2) {
+                intlImgs[ii].style.transform = 'scale(1.1) translateX(' + (rel * vwI * 0.06).toFixed(1) + 'px)';
+              }
+            }
+            if (intlCounter) {
+              var active = Math.min(intlPanels.length, Math.round(slideF) + 1);
+              intlCounter.textContent = '0' + active + ' / 0' + intlPanels.length;
+            }
+          }
+        }
+        requestAnimationFrame(intlLoop);
+      })();
+    }
+
     /* ---------- 07 · Red Bull: diagonal wipe reveal driven by scroll.
        The brand film slices in as a thin diagonal band, sweeps open to
        full-bleed while a giant outlined tagline flies across, then the
