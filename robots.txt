@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://brice-mialon.netlify.app/sitemap.xml
