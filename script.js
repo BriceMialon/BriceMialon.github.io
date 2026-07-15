@@ -1,6 +1,15 @@
 /* Security: never allow this site to be framed (clickjacking) */
 try { if (window.top !== window.self) { window.top.location = window.self.location; } } catch (eFrame) { }
 
+/* Perf: load Google Fonts without blocking first paint (display=swap
+   shows system fonts instantly, the brand fonts swap in when ready) */
+(function () {
+  var l = document.createElement('link');
+  l.rel = 'stylesheet';
+  l.href = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap';
+  document.head.appendChild(l);
+})();
+
 /* ---------- Fjord video: true 35s-80s loop via the YouTube IFrame API ----------
    The loop=1&playlist=<id> URL trick only respects start= on the first play;
    once it restarts it replays from 0s, showing footage we don't want.
@@ -205,6 +214,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     slides.forEach(function (_, i) {
       var dot = document.createElement('button');
+      dot.setAttribute('aria-label', 'Aller à la diapositive ' + (i + 1));
       if (i === 0) dot.classList.add('active');
       dot.addEventListener('click', function () { goTo(i); });
       dotsWrap.appendChild(dot);
@@ -333,6 +343,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     slides.forEach(function (_, i) {
       var dot = document.createElement('button');
+      dot.setAttribute('aria-label', 'Aller au témoignage ' + (i + 1));
       if (i === 0) dot.classList.add('active');
       dot.addEventListener('click', function () { goTo(i); });
       dotsWrap.appendChild(dot);
@@ -1349,8 +1360,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var comboTxt = combo ? ' Combo ×1,5 !' : '';
     if (usedClue) comboTxt += ' (indice utilisé : points réduits)';
     var rankTxt = ' Tu fais mieux que ' + percentile() + ' % des visiteurs.';
-    if (earnedFound >= WIN_TARGET && !revealedAll && !won) {
-      setFeedback('« ' + m.v.name + ' » (+' + pts + ' pts). Et de ' + WIN_TARGET + ' : partie gagnée ! Je retourne les autres cartes pour toi…', 'ok');
+    if (found === VALUES.length) {
+      setFeedback('Seize sur seize, ' + score + ' pts : match parfait. Si mes valeurs te parlent à ce point, le contact est en bas de page.', 'ok');
+      var cAll = centerOf(form);
+      burst(cAll.x, cAll.y, 90, FX_COLORS);
+      setTimeout(function () { burst(window.innerWidth * 0.3, window.innerHeight * 0.35, 45, FX_COLORS); }, 350);
+      setTimeout(function () { burst(window.innerWidth * 0.7, window.innerHeight * 0.3, 45, FX_COLORS); }, 700);
+    } else if (earnedFound >= WIN_TARGET && !revealedAll && !won) {
+      setFeedback('« ' + m.v.name + ' » (+' + pts + ' pts). Et de ' + WIN_TARGET + ' : partie gagnée ! Continue à deviner ou explore le site, chaque carte est un chapitre.', 'ok');
       var c = centerOf(form);
       burst(c.x, c.y, 90, FX_COLORS);
       winGame();
@@ -1365,30 +1382,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  /* ---------- victory at WIN_TARGET: celebrate, then flip the rest for free ---------- */
+  /* ---------- victory at WIN_TARGET: celebrate, the game stays open ---------- */
   var won = false;
   function winGame() {
     if (won) return;
     won = true;
     lastLevelIdx = 3;
-    setTimeout(showFinale, 1500);
-    var hidden = VALUES.filter(function (v) { return !v.found; });
-    hidden.forEach(function (v, i) {
-      setTimeout(function () {
-        v.found = true;
-        found++;
-        v.card.classList.add('found', 'flash');
-        (function (card) { setTimeout(function () { card.classList.remove('flash'); }, 650); })(v.card);
-        if (i % 3 === 0) {
-          var cc = centerOf(v.card);
-          burst(cc.x, cc.y, 12, FX_COLORS);
-        }
-        if (i === hidden.length - 1) {
-          updateHud();
-          setFeedback('Partie gagnée en ' + WIN_TARGET + ' qualités (' + score + ' pts). Les seize sont là : clique sur une carte pour explorer son chapitre.', 'ok');
-        }
-      }, 2200 + i * 140);
-    });
+    setTimeout(showFinale, 1100);
   }
 
   var revealedAll = false;
@@ -1523,11 +1523,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var h = document.createElement('h4');
     h.textContent = 'Tu m\'as cerné.';
     var p = document.createElement('p');
-    p.innerHTML = 'Portrait dressé en ' + earnedFound + ' qualités et <span class="vg-final-score">' + score + ' pts</span>, top ' + Math.max(100 - percentile(), 1) + ' % des visiteurs. Je retourne les dernières cartes pour toi : chacune raconte un chapitre du site. Et si mes valeurs te parlent, on devrait discuter.';
+    p.innerHTML = 'Partie gagnée : ' + earnedFound + ' qualités trouvées, <span class="vg-final-score">' + score + ' pts</span>, top ' + Math.max(100 - percentile(), 1) + ' % des visiteurs. Il en reste ' + (VALUES.length - found) + ' à découvrir si tu veux pousser jusqu\'au seize sur seize — et chaque carte retournée t\'emmène vers un chapitre du site.';
     var cta = document.createElement('a');
     cta.className = 'btn btn-primary';
-    cta.href = '#contact';
-    cta.textContent = 'Discutons-en';
+    cta.href = '#jeu';
+    cta.textContent = 'Continuer à jouer';
     card.appendChild(close); card.appendChild(eyebrow); card.appendChild(h); card.appendChild(p); card.appendChild(cta);
     overlay.appendChild(card);
     document.body.appendChild(overlay);
@@ -1537,9 +1537,7 @@ document.addEventListener('DOMContentLoaded', function () {
     cta.addEventListener('click', function (e) {
       e.preventDefault();
       killOverlay();
-      var t = document.querySelector('#contact');
-      if (window.__lenis) window.__lenis.scrollTo(t, { offset: -74, duration: 1.5 });
-      else t.scrollIntoView({ behavior: 'smooth' });
+      if (input) input.focus();
     });
     overlay.classList.add('show');
     var c = centerOf(form);
