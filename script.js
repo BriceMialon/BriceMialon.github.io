@@ -1,67 +1,140 @@
 /* Security: never allow this site to be framed (clickjacking) */
 try { if (window.top !== window.self) { window.top.location = window.self.location; } } catch (eFrame) { }
 
-/* Perf: load Google Fonts without blocking first paint (display=swap
-   shows system fonts instantly, the brand fonts swap in when ready) */
+/* =================================================================
+   YOUTUBE FACADES — the #1 performance fix.
+   No YouTube iframe (nor the iframe_api script) loads at page load.
+   Each .yt-facade div becomes a real iframe only when its section
+   approaches the viewport (or, for the hero, right after our own
+   page has painted), so first paint / LCP never wait for YouTube.
+   ================================================================= */
 (function () {
-  var l = document.createElement('link');
-  l.rel = 'stylesheet';
-  l.href = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap';
-  document.head.appendChild(l);
-})();
+  'use strict';
 
-/* ---------- Fjord video: true 35s-80s loop via the YouTube IFrame API ----------
-   The loop=1&playlist=<id> URL trick only respects start= on the first play;
-   once it restarts it replays from 0s, showing footage we don't want.
-   The IFrame API lets us force it back to 35s every time it hits the end. */
-var fjordLoopInit = false;
-function initFjordLoop() {
-  var el = document.getElementById('fjordPlayer');
-  if (fjordLoopInit || !el || !el.getAttribute('src') || !window.YT || !window.YT.Player) return;
-  fjordLoopInit = true;
-  new YT.Player('fjordPlayer', {
-    events: {
-      onStateChange: function (e) {
-        if (e.data === YT.PlayerState.ENDED) {
-          e.target.seekTo(35, true);
-          e.target.playVideo();
+  /* Players that need the IFrame API, and what to do once both the
+     API and their iframe exist. Guarded so each runs exactly once. */
+  var ytDone = {};
+  var ytSetups = {
+    /* Fjord: true 35s-80s loop (loop=1&playlist= replays from 0s). */
+    fjordPlayer: function () {
+      new YT.Player('fjordPlayer', {
+        events: {
+          onStateChange: function (e) {
+            if (e.data === YT.PlayerState.ENDED) {
+              e.target.seekTo(35, true);
+              e.target.playVideo();
+            }
+          }
         }
-      }
-    }
-  });
-}
-window.onYouTubeIframeAPIReady = initFjordLoop;
-
-/* ---------- Perf: lazy YouTube embeds ----------
-   The five background videos cost ~1 MB of scripts each when loaded eagerly.
-   Each iframe starts with data-src only; the hero loads right after the page
-   is interactive, the others when the visitor scrolls within 900px. */
-document.addEventListener('DOMContentLoaded', function () {
-  var lazies = Array.prototype.slice.call(document.querySelectorAll('iframe[data-src]'));
-  if (!lazies.length) return;
-  /* On phones, background videos cost several MB on cellular and wreck
-     load times: the poster images stay, the embeds never load. */
-  if (window.matchMedia('(max-width: 768px)').matches) return;
-  function activate(f) {
-    if (!f.getAttribute('src')) f.setAttribute('src', f.getAttribute('data-src'));
-    if (f.id === 'fjordPlayer') setTimeout(initFjordLoop, 1200);
-  }
-  var hero = document.querySelector('.hero-immersive-bg iframe[data-src]');
-  function loadHero() { if (hero) { var h = hero; hero = null; activate(h); } }
-  if (document.readyState === 'complete') setTimeout(loadHero, 200);
-  else window.addEventListener('load', function () { setTimeout(loadHero, 200); });
-  setTimeout(loadHero, 3500); /* failsafe if load never fires */
-  if ('IntersectionObserver' in window) {
-    var lio = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) { activate(en.target); lio.unobserve(en.target); }
       });
-    }, { rootMargin: '900px 0px 900px 0px' });
-    lazies.forEach(function (f) { if (f !== hero) lio.observe(f); });
-  } else {
-    lazies.forEach(activate);
+    },
+    /* Game table: calmer 0.85x playback, 90s of stillness between loops. */
+    vgBgPlayer: function () {
+      new YT.Player('vgBgPlayer', {
+        events: {
+          onReady: function (ev) { ev.target.mute(); ev.target.setPlaybackRate(0.85); },
+          onStateChange: function (ev) {
+            if (!window.YT) return;
+            if (ev.data === YT.PlayerState.PLAYING) ev.target.setPlaybackRate(0.85);
+            if (ev.data === YT.PlayerState.ENDED) {
+              setTimeout(function () {
+                try { ev.target.seekTo(0); ev.target.playVideo(); } catch (e2) { }
+              }, 90000);
+            }
+          }
+        }
+      });
+    }
+  };
+  function ytTrySetup(id) {
+    if (ytDone[id] || !ytSetups[id]) return;
+    if (!(window.YT && window.YT.Player) || !document.getElementById(id)) return;
+    ytDone[id] = 1;
+    try { ytSetups[id](); } catch (e) { /* non-blocking */ }
   }
-});
+  window.__ytTrySetup = ytTrySetup;
+  window.onYouTubeIframeAPIReady = function () {
+    ytTrySetup('fjordPlayer');
+    ytTrySetup('vgBgPlayer');
+  };
+
+  var apiRequested = false;
+  function ensureYtApi() {
+    if (apiRequested || (window.YT && window.YT.Player)) return;
+    apiRequested = true;
+    var s = document.createElement('script');
+    s.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(s);
+  }
+
+  function buildFacade(f) {
+    if (f.getAttribute('data-yt-built')) return;
+    f.setAttribute('data-yt-built', '1');
+    var src = f.getAttribute('data-yt-src') || '';
+    /* keep enablejsapi working on any host: origin must match the page */
+    try {
+      if (location.protocol.indexOf('http') === 0 && src.indexOf('origin=') !== -1) {
+        src = src.replace(/origin=[^&]+/, 'origin=' + encodeURIComponent(location.origin));
+      }
+    } catch (e) { /* non-blocking */ }
+    var ifr = document.createElement('iframe');
+    var fid = f.getAttribute('data-yt-id');
+    if (fid) ifr.id = fid;
+    ifr.src = src;
+    ifr.title = f.getAttribute('data-yt-title') || '';
+    ifr.setAttribute('frameborder', '0');
+    ifr.setAttribute('allow', 'autoplay; encrypted-media');
+    ifr.tabIndex = -1;
+    if (f.parentNode) f.parentNode.replaceChild(ifr, f);
+    if (src.indexOf('enablejsapi=1') !== -1) {
+      ensureYtApi();
+      if (fid) ytTrySetup(fid);
+    }
+  }
+
+  function init() {
+    var facades = Array.prototype.slice.call(document.querySelectorAll('.yt-facade'));
+    if (!facades.length) return;
+
+    var lazy = [], eager = [];
+    facades.forEach(function (f) {
+      (f.getAttribute('data-yt-eager') ? eager : lazy).push(f);
+    });
+
+    /* Hero video: wait until our own page has painted, then load it.
+       First scroll/touch/click also triggers it immediately. */
+    function loadEager() {
+      eager.forEach(buildFacade);
+      ['scroll', 'touchstart', 'pointerdown', 'keydown'].forEach(function (evt) {
+        window.removeEventListener(evt, loadEager);
+      });
+    }
+    if (eager.length) {
+      ['scroll', 'touchstart', 'pointerdown', 'keydown'].forEach(function (evt) {
+        window.addEventListener(evt, loadEager, { passive: true, once: false });
+      });
+      if (document.readyState === 'complete') { setTimeout(loadEager, 200); }
+      else { window.addEventListener('load', function () { setTimeout(loadEager, 200); }); }
+      setTimeout(loadEager, 3500); /* failsafe */
+    }
+
+    /* Section videos: load when the section is within ~1.5 screens. */
+    if ('IntersectionObserver' in window) {
+      var fio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) { fio.unobserve(en.target); buildFacade(en.target); }
+        });
+      }, { rootMargin: '150% 0px 150% 0px' });
+      lazy.forEach(function (f) { fio.observe(f); });
+    } else {
+      lazy.forEach(buildFacade);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+})();
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -102,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
         io.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.05, rootMargin: '0px 0px 60px 0px' });
+  }, { threshold: 0.05, rootMargin: '0px 0px 12% 0px' });
   revealTargets.forEach(function (el) { io.observe(el); });
 
   /* ---------- Stat count-up (harmless no-op if absent) ---------- */
@@ -217,7 +290,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     slides.forEach(function (_, i) {
       var dot = document.createElement('button');
-      dot.setAttribute('aria-label', 'Aller à la diapositive ' + (i + 1));
       if (i === 0) dot.classList.add('active');
       dot.addEventListener('click', function () { goTo(i); });
       dotsWrap.appendChild(dot);
@@ -346,7 +418,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     slides.forEach(function (_, i) {
       var dot = document.createElement('button');
-      dot.setAttribute('aria-label', 'Aller au témoignage ' + (i + 1));
       if (i === 0) dot.classList.add('active');
       dot.addEventListener('click', function () { goTo(i); });
       dotsWrap.appendChild(dot);
@@ -449,22 +520,6 @@ document.addEventListener('DOMContentLoaded', function () {
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  /* ---------- Fjord player: keep enablejsapi working on any host
-     (the origin param must match the domain actually serving the page) */
-  try {
-    ['fjordPlayer', 'vgBgPlayer'].forEach(function (fid) {
-      var fr = document.getElementById(fid);
-      if (!fr || location.protocol.indexOf('http') !== 0) return;
-      var attr = fr.getAttribute('data-src') && !fr.getAttribute('src') ? 'data-src' : 'src';
-      var val = fr.getAttribute(attr) || '';
-      if (val &&
-          val.indexOf('origin=' + encodeURIComponent(location.origin)) === -1 &&
-          val.indexOf('origin=' + location.origin) === -1) {
-        fr.setAttribute(attr, val.replace(/origin=[^&]+/, 'origin=' + encodeURIComponent(location.origin)));
-      }
-    });
-  } catch (e) { /* non-blocking */ }
-
   /* ---------- Split text into masked words (keeps inner spans like .hl) */
   function splitWords(el) {
     var idx = 0;
@@ -520,13 +575,14 @@ document.addEventListener('DOMContentLoaded', function () {
   try { seenIntro = sessionStorage.getItem('bm-intro') === '1'; } catch (e) { }
   if (preloader && !reduceMotion && !seenIntro) {
     document.body.classList.add('is-loading');
-    var minTime = 1800;
+    var minTime = 1400;
     var startT = performance.now();
     var countEl = document.getElementById('preloaderCount');
     var barEl = document.getElementById('preloaderBar');
     var pageLoaded = false, finished = false, loadedAt = null, pctAtLoad = 0;
-    window.addEventListener('load', function () { pageLoaded = true; });
-    setTimeout(function () { pageLoaded = true; }, 4000); /* never hold visitors hostage */
+    /* Deliberately NOT tied to window "load": heavy media must never
+       hold the visitor behind the curtain. Fixed, short opening. */
+    setTimeout(function () { pageLoaded = true; }, 1100);
     function finishPreloader() {
       if (finished) return;
       finished = true;
@@ -557,7 +613,7 @@ document.addEventListener('DOMContentLoaded', function () {
       requestAnimationFrame(tickPreloader);
     })();
     /* absolute failsafe (setTimeout survives rAF throttling) */
-    setTimeout(finishPreloader, Math.max(minTime, 4000) + 1800);
+    setTimeout(finishPreloader, 3200);
   } else {
     if (preloader) preloader.parentNode.removeChild(preloader);
     introDone();
@@ -917,22 +973,22 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!grid || !form || !input) return;
 
   var VALUES = [
-    { name: 'Écoute', clue: 'On l\'offre en se taisant : comprendre l\'autre avant de lui répondre.', syns: ['empathie', 'comprehension', 'bienveillance', 'attention aux autres', 'respect', 'dialogue', 'disponibilite', 'gentillesse', 'attentif', 'ecoute active', 'a l ecoute', 'sens de l ecoute', 'empathique', 'bienveillant', 'comprehensif', 'attentionne', 'diplomatie', 'diplomate', 'altruisme', 'altruiste'], why: 'Animer une Fresque du Climat m\'a appris à écouter avant de vouloir convaincre.', href: '#engagement' },
-    { name: 'Fédérer', clue: 'Transformer dix individualités en une seule équipe qui avance ensemble.', syns: ['leadership', 'leader', 'equipe', 'esprit d equipe', 'cohesion', 'collectif', 'management', 'manager', 'team spirit', 'entraide', 'solidarite', 'unir', 'rassembler', 'mobiliser', 'cooperation', 'collaboration', 'collaboratif', 'travail d equipe', 'federateur', 'meneur', 'meneuse', 'esprit collectif', 'gestion d equipe', 'encadrement', 'encadrer', 'chef d equipe', 'capitaine', 'team player'], why: 'Un an à la tête du BDE GACO : 10 personnes, 40 événements, un seul collectif.', href: '#bde' },
-    { name: 'Discipline', clue: 'S\'entraîner même quand personne ne regarde, et être à l\'heure quand tout le monde regarde.', syns: ['rigueur', 'rigoureux', 'regularite', 'serieux', 'organisation', 'organise', 'constance', 'ponctualite', 'ponctuel', 'assiduite', 'methode', 'methodique', 'professionnalisme', 'exigence', 'travail bien fait', 'structure', 'consciencieux', 'applique', 'soigneux', 'precis', 'precision', 'perfectionniste', 'perfectionnisme', 'efficace', 'efficacite', 'gestion du temps', 'savoir faire', 'gestion de projet', 'chef de projet', 'professionnel'], why: 'La boxe et l\'investissement m\'ont appris la même chose : la régularité paie.', href: '#depassement' },
-    { name: 'Sang-froid', clue: 'Garder la tête claire quand la pression monte et que tout s\'accélère.', syns: ['sang froid', 'sangfroid', 'calme', 'gestion du stress', 'stress', 'pression', 'maitrise de soi', 'maitrise', 'self control', 'gestion de crise', 'zen', 'serenite', 'resistance au stress', 'resistance a la pression', 'calme sous pression', 'garder son calme', 'controle de soi', 'gestion des emotions', 'nerfs solides', 'pose', 'imperturbable'], why: 'Monter sur un ring devant 400 personnes, ça relativise une réunion tendue.', href: '#depassement' },
-    { name: 'Ouverture d\'esprit', clue: 'Partir loin de ses repères et accueillir ce qui est différent sans juger.', syns: ['ouverture', 'international', 'tolerance', 'diversite', 'ouvert', 'multiculturel', 'interculturel', 'inclusion', 'voyage', 'ouvert d esprit', 'esprit ouvert', 'ouverture culturelle', 'mobilite', 'mobilite internationale', 'respect des differences', 'adaptabilite culturelle'], why: 'Un double diplôme au Québec, loin de mes repères : observer avant de juger.', href: '#international' },
-    { name: 'Curiosité', clue: 'L\'envie d\'apprendre et de comprendre comment tout fonctionne, encore et encore.', syns: ['apprendre', 'apprentissage', 'decouverte', 'soif d apprendre', 'curieux', 'creativite', 'creatif', 'innovation', 'innovant', 'imagination', 'veille', 'apprendre vite', 'esprit d innovation', 'envie d apprendre', 'autodidacte', 'esprit curieux', 'curiosite intellectuelle', 'inventif', 'ingenieux'], why: 'Comprendre comment chaque chose fonctionne, des marchés aux personnes.', href: '#investissement' },
-    { name: 'Énergie', clue: 'Ce que Red Bull est censé donner, et que j\'apporte déjà au réveil.', syns: ['dynamisme', 'dynamique', 'enthousiasme', 'motivation', 'motive', 'punch', 'passion', 'passionne', 'proactivite', 'proactif', 'entrain', 'peps', 'vitalite', 'implication', 'bonne humeur', 'sourire', 'positif', 'positivite', 'optimisme', 'optimiste', 'joie de vivre', 'engagement', 'energique', 'enthousiaste', 'enjoue', 'petillant', 'investi', 'implique'], why: 'Student Marketeer Red Bull : l\'énergie, c\'est littéralement le métier.', href: '#redbull' },
-    { name: 'Patience', clue: 'Laisser le temps faire son travail plutôt que de tout vouloir tout de suite.', syns: ['long terme', 'temps long', 'temperance', 'patient', 'patiente', 'endurance', 'sagesse', 'sage'], why: 'Investir sur la durée m\'a appris que le temps travaille pour moi.', href: '#investissement' },
-    { name: 'Humilité', clue: 'Savoir dire « je ne sais pas » et repartir apprendre.', syns: ['modestie', 'modeste', 'remise en question', 'humble', 'simplicite', 'apprendre de ses erreurs', 'remise en cause', 'accepter la critique', 'accepter ses erreurs', 'se remettre en question', 'sans pretention'], why: 'Nouvelle culture, nouvel accent : j\'ai réappris à écouter avant de parler.', href: '#international' },
-    { name: 'Adaptabilité', clue: 'Changer de plan sans changer d\'objectif quand l\'imprévu débarque.', syns: ['flexibilite', 'flexible', 'agilite', 'agile', 'polyvalence', 'polyvalent', 'adaptation', 'souplesse', 'reactivite', 'reactif', 'gestion du changement', 'changement', 'debrouillardise', 'debrouillard', 'adaptable', 'gestion de l imprevu', 'improvisation', 'improviser', 'ouvert au changement', 'multitache'], why: 'Terrain, imprévus, publics différents : je m\'ajuste vite et avec le sourire.', href: '#redbull' },
-    { name: 'Dépassement de soi', clue: 'Monter sur le ring alors que la peur dit de rester assis.', syns: ['depassement', 'ambition', 'ambitieux', 'perseverance', 'perseverant', 'resilience', 'resilient', 'determination', 'determine', 'courage', 'courageux', 'travail', 'travailleur', 'effort', 'combativite', 'volonte', 'audace', 'audacieux', 'gout du defi', 'defi', 'challenge', 'tenacite', 'tenace', 'ne rien lacher', 'grinta', 'competitif', 'gagneur', 'combatif', 'battant', 'battante', 'rage de vaincre', 'acharne', 'surpassement', 'esprit de competition', 'ne jamais abandonner', 'se depasser', 'initiative', 'prise d initiative', 'esprit d initiative', 'force de proposition', 'oser'], why: 'Victoire par TKO au premier round : la peur se travaille comme un muscle.', href: '#depassement' },
-    { name: 'Transmettre', clue: 'Partager ce qu\'on sait pour donner envie aux autres d\'essayer.', syns: ['transmission', 'pedagogie', 'pedagogue', 'partage', 'partager', 'enseigner', 'mentorat', 'former', 'formation', 'accompagnement', 'aider les autres', 'aider', 'pedagogique', 'didactique', 'coach', 'coaching', 'tutorat', 'tuteur', 'mentor', 'vulgariser', 'vulgarisation', 'generosite', 'genereux'], why: 'Ambassadeur UJM : donner envie à d\'autres de tenter l\'aventure.', href: '#ujm' },
-    { name: 'Confiance', clue: 'Déléguer sans surveiller par-dessus l\'épaule, et tenir sa parole.', syns: ['deleguer', 'delegation', 'fiabilite', 'fiable', 'loyaute', 'loyal', 'honnetete', 'honnete', 'integrite', 'integre', 'autonomie', 'autonome', 'responsabilite', 'responsable', 'transparence', 'franchise', 'franc', 'droiture', 'sincerite', 'sincere', 'parole tenue', 'confiance en soi', 'assurance', 'digne de confiance', 'tenir ses engagements', 'sens des responsabilites', 'ethique'], why: 'Déléguer sans lâcher : la grande leçon de mon année de présidence.', href: '#bde' },
-    { name: 'Contact humain', clue: 'Aller vers les gens et créer du lien partout, tout le temps.', syns: ['contact', 'relationnel', 'communication', 'communicant', 'humain', 'sociabilite', 'sociable', 'relation', 'social', 'convivialite', 'networking', 'reseautage', 'aisance relationnelle', 'sens du contact', 'sympathie', 'sympathique', 'chaleureux', 'extraverti', 'charisme', 'charismatique', 'sens du relationnel', 'bon relationnel', 'aisance a l oral', 'prise de parole', 'eloquence', 'accueillant', 'avenant', 'souriant'], why: 'Aller vers les gens et sentir l\'énergie d\'un groupe, c\'est ce que je préfère.', href: '#redbull' },
-    { name: 'Vision stratégique', clue: 'Voir trois coups d\'avance et comprendre où se crée vraiment la valeur.', syns: ['vision', 'strategie', 'strategique', 'anticipation', 'anticiper', 'vision long terme', 'prise de decision', 'decision', 'esprit d entreprise', 'entrepreneuriat', 'entrepreneur', 'business', 'vision globale', 'hauteur de vue', 'priorisation', 'esprit de synthese', 'synthese', 'planification', 'planifier', 'sens des affaires', 'esprit business', 'vision d ensemble', 'prise de hauteur'], why: 'Comprendre comment une entreprise crée vraiment de la valeur, avant d\'agir.', href: '#investissement' },
-    { name: 'Lucidité', clue: 'Regarder ses erreurs en face et en tirer les bonnes conclusions.', syns: ['recul', 'esprit critique', 'analyse', 'analytique', 'esprit d analyse', 'objectivite', 'objectif', 'pragmatisme', 'pragmatique', 'honnetete intellectuelle', 'realisme', 'realiste', 'discernement', 'bon sens', 'prise de recul', 'intelligence', 'lucide', 'reflexion', 'reflechi', 'rationnel', 'logique', 'esprit logique', 'resolution de problemes', 'capacite d analyse', 'sens critique'], why: 'Accepter de me tromper, l\'assumer, et en tirer quelque chose.', href: '#depassement' }
+    { name: 'Écoute', clue: 'On l\'offre en se taisant : comprendre l\'autre avant de lui répondre.', syns: ['empathie', 'comprehension', 'bienveillance', 'attention aux autres', 'respect', 'dialogue', 'disponibilite', 'gentillesse', 'attentif'], why: 'Animer une Fresque du Climat m\'a appris à écouter avant de vouloir convaincre.', href: '#engagement' },
+    { name: 'Fédérer', clue: 'Transformer dix individualités en une seule équipe qui avance ensemble.', syns: ['leadership', 'leader', 'equipe', 'esprit d equipe', 'cohesion', 'collectif', 'management', 'manager', 'team spirit', 'entraide', 'solidarite', 'unir', 'rassembler', 'mobiliser', 'cooperation', 'collaboration', 'collaboratif', 'travail d equipe'], why: 'Un an à la tête du BDE GACO : 10 personnes, 40 événements, un seul collectif.', href: '#bde' },
+    { name: 'Discipline', clue: 'S\'entraîner même quand personne ne regarde, et être à l\'heure quand tout le monde regarde.', syns: ['rigueur', 'rigoureux', 'regularite', 'serieux', 'organisation', 'organise', 'constance', 'ponctualite', 'ponctuel', 'assiduite', 'methode', 'methodique', 'professionnalisme', 'exigence', 'travail bien fait'], why: 'La boxe et l\'investissement m\'ont appris la même chose : la régularité paie.', href: '#depassement' },
+    { name: 'Sang-froid', clue: 'Garder la tête claire quand la pression monte et que tout s\'accélère.', syns: ['sang froid', 'sangfroid', 'calme', 'gestion du stress', 'stress', 'pression', 'maitrise de soi', 'maitrise', 'self control', 'gestion de crise', 'zen', 'serenite', 'resistance au stress'], why: 'Monter sur un ring devant 400 personnes, ça relativise une réunion tendue.', href: '#depassement' },
+    { name: 'Ouverture d\'esprit', clue: 'Partir loin de ses repères et accueillir ce qui est différent sans juger.', syns: ['ouverture', 'international', 'tolerance', 'diversite', 'ouvert', 'multiculturel', 'interculturel', 'inclusion', 'voyage', 'ouvert d esprit'], why: 'Un double diplôme au Québec, loin de mes repères : observer avant de juger.', href: '#international' },
+    { name: 'Curiosité', clue: 'L\'envie d\'apprendre et de comprendre comment tout fonctionne, encore et encore.', syns: ['apprendre', 'apprentissage', 'decouverte', 'soif d apprendre', 'curieux', 'creativite', 'creatif', 'innovation', 'innovant', 'imagination', 'veille', 'apprendre vite', 'esprit d innovation'], why: 'Comprendre comment chaque chose fonctionne, des marchés aux personnes.', href: '#investissement' },
+    { name: 'Énergie', clue: 'Ce que Red Bull est censé donner, et que j\'apporte déjà au réveil.', syns: ['dynamisme', 'dynamique', 'enthousiasme', 'motivation', 'motive', 'punch', 'passion', 'passionne', 'proactivite', 'proactif', 'entrain', 'peps', 'vitalite', 'implication', 'bonne humeur', 'sourire', 'positif', 'positivite', 'optimisme', 'optimiste', 'joie de vivre', 'engagement'], why: 'Student Marketeer Red Bull : l\'énergie, c\'est littéralement le métier.', href: '#redbull' },
+    { name: 'Patience', clue: 'Laisser le temps faire son travail plutôt que de tout vouloir tout de suite.', syns: ['long terme', 'temps long', 'temperance', 'patient', 'endurance'], why: 'Investir sur la durée m\'a appris que le temps travaille pour moi.', href: '#investissement' },
+    { name: 'Humilité', clue: 'Savoir dire « je ne sais pas » et repartir apprendre.', syns: ['modestie', 'modeste', 'remise en question', 'humble', 'simplicite', 'apprendre de ses erreurs', 'remise en cause'], why: 'Nouvelle culture, nouvel accent : j\'ai réappris à écouter avant de parler.', href: '#international' },
+    { name: 'Adaptabilité', clue: 'Changer de plan sans changer d\'objectif quand l\'imprévu débarque.', syns: ['flexibilite', 'flexible', 'agilite', 'agile', 'polyvalence', 'polyvalent', 'adaptation', 'souplesse', 'reactivite', 'reactif', 'gestion du changement', 'changement', 'debrouillardise', 'debrouillard'], why: 'Terrain, imprévus, publics différents : je m\'ajuste vite et avec le sourire.', href: '#redbull' },
+    { name: 'Dépassement de soi', clue: 'Monter sur le ring alors que la peur dit de rester assis.', syns: ['depassement', 'ambition', 'ambitieux', 'perseverance', 'perseverant', 'resilience', 'resilient', 'determination', 'determine', 'courage', 'courageux', 'travail', 'travailleur', 'effort', 'combativite', 'volonte', 'audace', 'audacieux', 'gout du defi', 'defi', 'challenge', 'tenacite', 'tenace', 'ne rien lacher', 'grinta', 'competitif', 'gagneur'], why: 'Victoire par TKO au premier round : la peur se travaille comme un muscle.', href: '#depassement' },
+    { name: 'Transmettre', clue: 'Partager ce qu\'on sait pour donner envie aux autres d\'essayer.', syns: ['transmission', 'pedagogie', 'pedagogue', 'partage', 'partager', 'enseigner', 'mentorat', 'former', 'formation', 'accompagnement', 'aider les autres', 'aider'], why: 'Ambassadeur UJM : donner envie à d\'autres de tenter l\'aventure.', href: '#ujm' },
+    { name: 'Confiance', clue: 'Déléguer sans surveiller par-dessus l\'épaule, et tenir sa parole.', syns: ['deleguer', 'delegation', 'fiabilite', 'fiable', 'loyaute', 'loyal', 'honnetete', 'honnete', 'integrite', 'integre', 'autonomie', 'autonome', 'responsabilite', 'responsable', 'transparence', 'franchise', 'franc', 'droiture', 'sincerite', 'sincere', 'parole tenue'], why: 'Déléguer sans lâcher : la grande leçon de mon année de présidence.', href: '#bde' },
+    { name: 'Contact humain', clue: 'Aller vers les gens et créer du lien partout, tout le temps.', syns: ['contact', 'relationnel', 'communication', 'communicant', 'humain', 'sociabilite', 'sociable', 'relation', 'social', 'convivialite', 'networking', 'reseautage', 'aisance relationnelle', 'sens du contact', 'sympathie', 'sympathique', 'chaleureux', 'extraverti', 'charisme', 'charismatique'], why: 'Aller vers les gens et sentir l\'énergie d\'un groupe, c\'est ce que je préfère.', href: '#redbull' },
+    { name: 'Vision stratégique', clue: 'Voir trois coups d\'avance et comprendre où se crée vraiment la valeur.', syns: ['vision', 'strategie', 'strategique', 'anticipation', 'anticiper', 'vision long terme', 'prise de decision', 'decision', 'esprit d entreprise', 'entrepreneuriat', 'entrepreneur', 'business', 'vision globale', 'hauteur de vue', 'priorisation', 'esprit de synthese', 'synthese'], why: 'Comprendre comment une entreprise crée vraiment de la valeur, avant d\'agir.', href: '#investissement' },
+    { name: 'Lucidité', clue: 'Regarder ses erreurs en face et en tirer les bonnes conclusions.', syns: ['recul', 'esprit critique', 'analyse', 'analytique', 'esprit d analyse', 'objectivite', 'objectif', 'pragmatisme', 'pragmatique', 'honnetete intellectuelle', 'realisme', 'realiste', 'discernement', 'bon sens', 'prise de recul', 'intelligence'], why: 'Accepter de me tromper, l\'assumer, et en tirer quelque chose.', href: '#depassement' }
   ];
 
   function normalize(str) {
@@ -1007,26 +1063,8 @@ document.addEventListener('DOMContentLoaded', function () {
         intro.innerHTML = '<div class="vg-intro-text">C\'est le moment de <em>jouer</em>.</div>';
         (vgSecEl || document.body).appendChild(intro);
         requestAnimationFrame(function () { intro.classList.add('show'); });
-        /* ambient table video runs at 0.75x for a calmer mood */
-        try {
-          if (window.YT && window.YT.Player && document.getElementById('vgBgPlayer')) {
-            new YT.Player('vgBgPlayer', {
-              events: {
-                onReady: function (ev) { ev.target.mute(); ev.target.setPlaybackRate(0.85); },
-                onStateChange: function (ev) {
-                  if (!window.YT) return;
-                  if (ev.data === YT.PlayerState.PLAYING) ev.target.setPlaybackRate(0.85);
-                  /* let the table breathe: 1 min 30 of stillness between loops */
-                  if (ev.data === YT.PlayerState.ENDED) {
-                    setTimeout(function () {
-                      try { ev.target.seekTo(0); ev.target.playVideo(); } catch (e2) { }
-                    }, 90000);
-                  }
-                }
-              }
-            });
-          }
-        } catch (errYt) { /* non-blocking */ }
+        /* ambient table video: handled by the facade loader + YT registry */
+        try { if (window.__ytTrySetup) window.__ytTrySetup('vgBgPlayer'); } catch (errYt) { /* non-blocking */ }
         setTimeout(function () {
           intro.classList.remove('show');
           setTimeout(function () { if (intro.parentNode) intro.parentNode.removeChild(intro); }, 600);
@@ -1126,7 +1164,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (fxParts.length) { requestAnimationFrame(stepFx); }
     else { fxRunning = false; fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height); }
   }
-  var FX_COLORS = ['#ff6b45', '#ff8a63', '#3654ff', '#ffffff'];
+  var FX_COLORS = ['#ff6b45', '#ffb930', '#3654ff', '#7ee2a8', '#ffffff'];
   function centerOf(el) {
     var r = el.getBoundingClientRect();
     var vh = window.innerHeight || 800;
@@ -1146,15 +1184,14 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   /* ---------- HUD ---------- */
-  var WIN_TARGET = 6;
-  var LEVELS = [[0, 'Niv. 1 · Observateur'], [2, 'Niv. 2 · Analyste'], [4, 'Niv. 3 · Chasseur de talents'], [6, 'Niv. MAX · DRH d\'élite']];
+  var LEVELS = [[0, 'Niv. 1 · Observateur'], [4, 'Niv. 2 · Analyste'], [8, 'Niv. 3 · Chasseur de talents'], [12, 'Niv. 4 · DRH d\'élite'], [16, 'Niv. MAX · Match parfait']];
   function levelName() {
     var name = LEVELS[0][1];
     LEVELS.forEach(function (l) { if (earnedFound >= l[0]) name = l[1]; });
     return name;
   }
   function percentile() {
-    return Math.min(99, Math.round(16 + earnedFound * 11 + Math.min(score, 900) / 60));
+    return Math.min(99, Math.round(16 + earnedFound * 4.3 + Math.min(score, 1400) / 60));
   }
   function animateScore() {
     var from = shownScore, to = score, t0 = performance.now();
@@ -1247,12 +1284,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 7500);
   }
 
-  /* umbrella words: true for the whole board, so they get a wink instead of a miss */
-  var UMBRELLA = ['savoir etre', 'savoir vivre', 'soft skills', 'soft skill', 'softskills', 'softskill', 'qualite', 'qualites', 'qualite humaine', 'qualites humaines', 'competence', 'competences', 'valeur', 'valeurs', 'personnalite', 'bon stagiaire', 'bon collegue'].map(normalize);
-
-  /* filler words stripped before the fallback pass (« bonne écoute » → « écoute ») */
-  var STOPWORDS = ['bon', 'bonne', 'tres', 'super', 'grand', 'grande', 'fort', 'forte', 'le', 'la', 'les', 'un', 'une', 'de', 'du', 'des', 'd', 'l', 'et', 'avoir', 'etre', 'beaucoup', 'plein', 'vraiment'];
-
   /* words that must never land on a card */
   var BLOCKLIST = ['chiant', 'mechant', 'nul', 'con', 'connard', 'connasse', 'moche', 'bete', 'stupide', 'idiot', 'idiote', 'naze', 'pourri', 'flemmard', 'flemme', 'paresseux', 'paresse', 'arrogant', 'arrogance', 'egoiste', 'egoisme', 'menteur', 'mensonge', 'lache', 'faible', 'ennuyeux', 'relou', 'debile', 'mauvais', 'jaloux', 'hypocrite', 'pretentieux', 'aggressif', 'agressif', 'violent', 'toxique'];
 
@@ -1285,28 +1316,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   var lastMissScore = 0;
 
-  /* fallback: strip filler words, then try each meaningful word alone
-     (« très bonne écoute » or « gestion déquipe » still land somewhere) */
-  function matchWithFallback(guess) {
-    var m = bestMatch(guess);
-    if (m) return m;
-    var words = guess.split(' ').filter(function (w) { return STOPWORDS.indexOf(w) === -1; });
-    if (!words.length) return null;
-    var cleaned = words.join(' ');
-    if (cleaned !== guess) {
-      m = bestMatch(cleaned);
-      if (m) return m;
-    }
-    if (words.length > 1) {
-      for (var i = 0; i < words.length; i++) {
-        if (words[i].length < 4) continue;
-        m = bestMatch(words[i]);
-        if (m) return m;
-      }
-    }
-    return null;
-  }
-
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var raw = input.value.trim();
@@ -1322,11 +1331,7 @@ document.addEventListener('DOMContentLoaded', function () {
       nudgeIfStuck();
       return;
     }
-    if (UMBRELLA.indexOf(guess) !== -1) {
-      setFeedback('« ' + raw + ' » ? C\'est justement tout ce plateau. Précise ta pensée : écoute ? rigueur ? sang-froid ? audace ?', 'ok');
-      return;
-    }
-    var m = matchWithFallback(guess);
+    var m = bestMatch(guess);
 
     if (m && m.v.found) {
       stuckCount++;
@@ -1341,7 +1346,7 @@ document.addEventListener('DOMContentLoaded', function () {
       void form.offsetWidth;
       form.classList.add('shake');
       stuckCount++;
-      setFeedback('Pas de carte pour « ' + raw + ' » chez moi. Explore les familles : leadership, rigueur, relationnel, mental d\'acier, ouverture… ou prends un indice, c\'est fait pour ça.', 'miss');
+      setFeedback('Je ne vois pas encore le lien avec « ' + raw + ' »… vise un trait humain (écoute, rigueur, audace, vision).', 'miss');
       nudgeIfStuck();
       return;
     }
@@ -1364,16 +1369,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (usedClue) comboTxt += ' (indice utilisé : points réduits)';
     var rankTxt = ' Tu fais mieux que ' + percentile() + ' % des visiteurs.';
     if (found === VALUES.length) {
-      setFeedback('Seize sur seize, ' + score + ' pts : match parfait. Si mes valeurs te parlent à ce point, le contact est en bas de page.', 'ok');
-      var cAll = centerOf(form);
-      burst(cAll.x, cAll.y, 90, FX_COLORS);
-      setTimeout(function () { burst(window.innerWidth * 0.3, window.innerHeight * 0.35, 45, FX_COLORS); }, 350);
-      setTimeout(function () { burst(window.innerWidth * 0.7, window.innerHeight * 0.3, 45, FX_COLORS); }, 700);
-    } else if (earnedFound >= WIN_TARGET && !revealedAll && !won) {
-      setFeedback('« ' + m.v.name + ' » (+' + pts + ' pts). Et de ' + WIN_TARGET + ' : partie gagnée ! Continue à deviner ou explore le site, chaque carte est un chapitre.', 'ok');
+      setFeedback('Seize sur seize, ' + score + ' pts, top ' + Math.max(100 - percentile(), 1) + ' % des visiteurs. On est faits pour s\'entendre : descends jusqu\'au contact !', 'ok');
       var c = centerOf(form);
       burst(c.x, c.y, 90, FX_COLORS);
-      winGame();
     } else if (m.tier === 1) {
       setFeedback('En plein dans le mille : « ' + m.v.name + ' » (+' + pts + ' pts).' + comboTxt + rankTxt, 'ok');
     } else if (m.tier === 2) {
@@ -1384,15 +1382,6 @@ document.addEventListener('DOMContentLoaded', function () {
       setFeedback('Je vois l\'idée : pour moi, ça touche à « ' + m.v.name + ' » (+' + pts + ' pts).' + comboTxt + rankTxt, 'ok');
     }
   });
-
-  /* ---------- victory at WIN_TARGET: celebrate, the game stays open ---------- */
-  var won = false;
-  function winGame() {
-    if (won) return;
-    won = true;
-    lastLevelIdx = 3;
-    setTimeout(showFinale, 1100);
-  }
 
   var revealedAll = false;
   if (revealBtn) {
@@ -1492,7 +1481,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* level-up flash */
   var lvlOverlay = null, lastLevelIdx = 0;
-  function levelIdx() { return earnedFound >= 6 ? 3 : earnedFound >= 4 ? 2 : earnedFound >= 2 ? 1 : 0; }
+  function levelIdx() { return earnedFound >= 12 ? 3 : earnedFound >= 8 ? 2 : earnedFound >= 4 ? 1 : 0; }
   function showLevelUp(text) {
     if (reduceFx) return;
     if (!lvlOverlay) {
@@ -1522,15 +1511,15 @@ document.addEventListener('DOMContentLoaded', function () {
     close.textContent = '\u00d7';
     var eyebrow = document.createElement('span');
     eyebrow.className = 'vg-final-eyebrow';
-    eyebrow.textContent = 'Objectif atteint';
+    eyebrow.textContent = 'Seize sur seize';
     var h = document.createElement('h4');
-    h.textContent = 'Tu m\'as cerné.';
+    h.textContent = 'Match parfait.';
     var p = document.createElement('p');
-    p.innerHTML = 'Partie gagnée : ' + earnedFound + ' qualités trouvées, <span class="vg-final-score">' + score + ' pts</span>, top ' + Math.max(100 - percentile(), 1) + ' % des visiteurs. Il en reste ' + (VALUES.length - found) + ' à découvrir si tu veux pousser jusqu\'au seize sur seize — et chaque carte retournée t\'emmène vers un chapitre du site.';
+    p.innerHTML = 'Tu viens de dresser mon portrait en <span class="vg-final-score">' + score + ' pts</span>, top ' + Math.max(100 - percentile(), 1) + ' % des visiteurs. Si mes valeurs te parlent autant, on devrait discuter.';
     var cta = document.createElement('a');
     cta.className = 'btn btn-primary';
-    cta.href = '#jeu';
-    cta.textContent = 'Continuer à jouer';
+    cta.href = '#contact';
+    cta.textContent = 'Discutons-en';
     card.appendChild(close); card.appendChild(eyebrow); card.appendChild(h); card.appendChild(p); card.appendChild(cta);
     overlay.appendChild(card);
     document.body.appendChild(overlay);
@@ -1540,7 +1529,9 @@ document.addEventListener('DOMContentLoaded', function () {
     cta.addEventListener('click', function (e) {
       e.preventDefault();
       killOverlay();
-      if (input) input.focus();
+      var t = document.querySelector('#contact');
+      if (window.__lenis) window.__lenis.scrollTo(t, { offset: -74, duration: 1.5 });
+      else t.scrollIntoView({ behavior: 'smooth' });
     });
     overlay.classList.add('show');
     var c = centerOf(form);
@@ -1558,9 +1549,12 @@ document.addEventListener('DOMContentLoaded', function () {
       if (levelEl) levelEl.textContent = 'Niv. 0 · Spectateur';
     }
     var idx = levelIdx();
-    if (idx > lastLevelIdx && !won && found < VALUES.length) {
+    if (idx > lastLevelIdx && found < VALUES.length) {
       lastLevelIdx = idx;
       showLevelUp(levelName());
+    }
+    if (found === VALUES.length && !finalShown && !revealedAll) {
+      setTimeout(showFinale, 900);
     }
   };
 })();

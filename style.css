@@ -15,7 +15,7 @@ html{scroll-behavior:smooth;}
   --accent-dark:#e8532e;
   --accent-soft:#ffe7dd;
   --night:#0b0c14;
-  --sun:#ff8a63; /* palette resserrée : le doré rejoint la famille corail */
+  --sun:#ffb930;
   --radius-sm:12px;
   --radius:20px;
   --radius-lg:28px;
@@ -50,16 +50,6 @@ section{position:relative;}
 @media (max-width:768px){.section-pad{padding:64px 0;}}
 
 /* ============ SCROLL PROGRESS ============ */
-/* lazy embeds: keep the frame invisible until its src is injected */
-iframe[data-src]:not([src]){visibility:hidden;}
-/* mobile: lighter posters (480px suffit sur petit écran, ~20 Ko au lieu de ~100) */
-@media (max-width:768px){
-  .hero-immersive-bg{background-image:url('https://i.ytimg.com/vi/IWT0hFrPTQM/hqdefault.jpg') !important;}
-  .hero-video-b-bg{background-image:url('https://i.ytimg.com/vi/6N13elbIXdQ/hqdefault.jpg') !important;}
-  .vg-bgvideo{background-image:url('https://i.ytimg.com/vi/6skaM_CsTPg/hqdefault.jpg') !important;}
-  .invest-cinema-bg{background-image:url('https://i.ytimg.com/vi/AFicYbv-mzg/hqdefault.jpg') !important;}
-  .rb-bg{background-image:url('https://i.ytimg.com/vi/IQQf7FEr668/hqdefault.jpg') !important;}
-}
 .scroll-progress{position:fixed;top:0;left:0;height:4px;width:0%;background:linear-gradient(90deg,var(--primary),var(--accent));z-index:1100;transition:width .05s linear;}
 
 /* ============ NAV ============ */
@@ -223,16 +213,16 @@ iframe[data-src]:not([src]){visibility:hidden;}
 /* ============ REVEAL ============ */
 .reveal{opacity:0;transform:translateY(16px);transition:opacity .45s var(--ease),transform .45s var(--ease);}
 .reveal.visible{opacity:1;transform:translateY(0);}
-.reveal.reveal-left{transform:translateX(-56px);}
+.reveal.reveal-left{transform:translateX(-32px);}
 .reveal.reveal-left.visible{transform:translateX(0);}
-.reveal.reveal-right{transform:translateX(56px);}
+.reveal.reveal-right{transform:translateX(32px);}
 .reveal.reveal-right.visible{transform:translateX(0);}
-.reveal.reveal-scale{transform:translateY(20px) scale(.93);}
+.reveal.reveal-scale{transform:translateY(14px) scale(.95);}
 .reveal.reveal-scale.visible{transform:translateY(0) scale(1);}
 .reveal.reveal-unroll{opacity:0;transform:none;clip-path:inset(0 100% 0 0 round 100px);transition:clip-path .6s var(--ease),opacity .25s ease;}
 .reveal.reveal-unroll.visible{opacity:1;clip-path:inset(0 0% 0 0 round 100px);}
 /* reveal-slam: photos fan in with a rotation, punchier than the plain scale-up used elsewhere */
-.reveal.reveal-slam{transform:translateY(40px) rotate(-9deg) scale(.85);transition:opacity .45s var(--ease),transform .45s cubic-bezier(.2,.85,.3,1.4);}
+.reveal.reveal-slam{transform:translateY(40px) rotate(-9deg) scale(.85);transition:opacity .5s var(--ease),transform .5s cubic-bezier(.2,.85,.3,1.4);}
 .reveal.reveal-slam.visible{transform:translateY(0) rotate(0deg) scale(1);}
 .redbull-trio.trio .trio-item:nth-child(1).reveal-slam{transform:translateY(56px) rotate(-11deg) scale(.8);}
 .redbull-trio.trio .trio-item:nth-child(2).reveal-slam{transform:translateY(68px) rotate(0deg) scale(.78);}
@@ -242,14 +232,14 @@ iframe[data-src]:not([src]){visibility:hidden;}
 .redbull-trio.trio .trio-item:nth-child(3).reveal-slam.visible{transform:translateY(0) rotate(0deg) scale(1);}
 /* reveal-flip: 3D card flip, used for the UJM video panel (single flip) and the
    Investissement trio (alternating left/right flip per card, see override below) */
-.reveal.reveal-flip{transform:perspective(1000px) rotateY(-28deg) translateY(10px) scale(.92);transition:opacity .55s var(--ease),transform .55s cubic-bezier(.34,1.56,.64,1);}
+.reveal.reveal-flip{transform:perspective(1000px) rotateY(-22deg) translateY(8px) scale(.94);transition:opacity .55s var(--ease),transform .55s cubic-bezier(.34,1.56,.64,1);}
 .reveal.reveal-flip.visible{transform:perspective(1000px) rotateY(0deg) translateY(0) scale(1);}
 .trio .trio-item:nth-child(odd).reveal-flip{transform:perspective(1000px) rotateY(-32deg) translateY(14px) scale(.9);}
 .trio .trio-item:nth-child(even).reveal-flip{transform:perspective(1000px) rotateY(32deg) translateY(14px) scale(.9);}
 .trio .trio-item:nth-child(odd).reveal-flip.visible,
 .trio .trio-item:nth-child(even).reveal-flip.visible{transform:perspective(1000px) rotateY(0deg) translateY(0) scale(1);}
 /* reveal-blur: image resolves into focus, used for the International gallery */
-.reveal.reveal-blur{filter:blur(12px);transform:translateY(10px) scale(1.02);transition:opacity .55s var(--ease),transform .55s var(--ease),filter .55s var(--ease);}
+.reveal.reveal-blur{filter:blur(10px);transform:translateY(10px) scale(1.02);transition:opacity .55s var(--ease),transform .55s var(--ease),filter .55s var(--ease);}
 .reveal.reveal-blur.visible{filter:blur(0);transform:translateY(0) scale(1);}
 /* stagger: photo grids arrive one after another instead of all at once (also covers redbull-trio, since it's a .trio too) */
 .trio .trio-item:nth-child(1){transition-delay:0s;}
@@ -681,7 +671,7 @@ h2.split.play .hw-i{transition-delay:calc(var(--i,0)*45ms);}
 #contact-stage.flash{animation:stage-target-flash 1.8s ease;}
 
 /* ---------- Section entrances: slightly longer, more filmic curve ---------- */
-.reveal{transition-duration:.55s;transition-timing-function:cubic-bezier(.22,.9,.3,1);}
+.reveal{transition-duration:.9s;transition-timing-function:cubic-bezier(.22,.9,.3,1);}
 
 /* ---------- 06 · Investissement: full-bleed trailer chapter ----------
    The section is taller than the viewport; a sticky stage pins the video
@@ -781,8 +771,8 @@ h2.split.play .hw-i{transition-delay:calc(var(--i,0)*45ms);}
 }
 .vg-form input::placeholder{color:rgba(255,255,255,.35);}
 .vg-form input:focus{
-  border-color:rgba(255,138,99,.7);background:rgba(255,255,255,.09);
-  box-shadow:0 0 0 5px rgba(255,138,99,.12),0 0 44px rgba(255,138,99,.1);
+  border-color:rgba(255,185,48,.7);background:rgba(255,255,255,.09);
+  box-shadow:0 0 0 5px rgba(255,185,48,.12),0 0 44px rgba(255,185,48,.1);
 }
 .vg-form.shake{animation:vg-shake .45s ease;}
 @keyframes vg-shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-9px);}40%{transform:translateX(7px);}60%{transform:translateX(-5px);}80%{transform:translateX(3px);}}
@@ -845,7 +835,7 @@ h2.split.play .hw-i{transition-delay:calc(var(--i,0)*45ms);}
   transition:transform .35s var(--ease),border-color .3s ease,background .3s ease;
 }
 .vg-card:not(.found):hover .vg-front{
-  transform:translateY(-5px);border-color:rgba(255,138,99,.45);
+  transform:translateY(-5px);border-color:rgba(255,185,48,.45);
   background:linear-gradient(160deg,rgba(255,255,255,.11),rgba(255,255,255,.03));
 }
 .vg-front .vg-q{font-family:var(--font-display);font-weight:600;font-size:30px;color:rgba(255,255,255,.25);}
@@ -862,7 +852,7 @@ h2.split.play .hw-i{transition-delay:calc(var(--i,0)*45ms);}
 .vg-back .vg-pts{position:absolute;top:10px;right:13px;font-size:11px;font-weight:800;color:var(--accent);}
 .vg-card.found.exact .vg-back{
   border-color:var(--sun);
-  box-shadow:0 0 0 2px rgba(255,138,99,.55),0 24px 54px rgba(255,138,99,.18);
+  box-shadow:0 0 0 2px rgba(255,185,48,.55),0 24px 54px rgba(255,185,48,.18);
 }
 .vg-card.flash .vg-card-inner{animation:vg-pop .55s var(--ease);}
 @keyframes vg-pop{0%{transform:rotateY(180deg) scale(.92);}55%{transform:rotateY(180deg) scale(1.05);}100%{transform:rotateY(180deg) scale(1);}}
@@ -890,7 +880,7 @@ h2.split.play .hw-i{transition-delay:calc(var(--i,0)*45ms);}
 }
 .vg-levelup::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at center,rgba(255,138,99,.15),rgba(11,12,20,.78) 78%);
+  background:radial-gradient(ellipse at center,rgba(255,185,48,.15),rgba(11,12,20,.78) 78%);
 }
 .vg-levelup .vg-lvl-text{
   position:relative;font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;
@@ -908,7 +898,7 @@ h2.split.play .hw-i{transition-delay:calc(var(--i,0)*45ms);}
 @keyframes vg-final-in{from{opacity:0;}to{opacity:1;}}
 .vg-final-card{
   position:relative;background:var(--paper);border-radius:26px;padding:46px 46px 40px;text-align:center;max-width:540px;
-  box-shadow:0 0 0 2px rgba(255,138,99,.55),0 44px 110px rgba(0,0,0,.6);
+  box-shadow:0 0 0 2px rgba(255,185,48,.55),0 44px 110px rgba(0,0,0,.6);
   animation:vg-final-card .7s cubic-bezier(.25,1.2,.4,1);
 }
 @keyframes vg-final-card{from{transform:scale(.86) translateY(26px);opacity:0;}to{transform:scale(1) translateY(0);opacity:1;}}
@@ -929,12 +919,12 @@ h2.split.play .hw-i{transition-delay:calc(var(--i,0)*45ms);}
 
 .vg-hintbtn{
   position:relative;overflow:hidden;
-  border:1px solid rgba(255,138,99,.45);background:rgba(255,138,99,.08);color:var(--sun);
+  border:1px solid rgba(255,185,48,.45);background:rgba(255,185,48,.08);color:var(--sun);
   font-weight:700;font-size:12px;letter-spacing:.04em;padding:9px 18px;border-radius:100px;cursor:pointer;
   transition:background .25s,transform .25s,opacity .25s,border-color .25s;
 }
 .vg-hintbtn b{font-variant-numeric:tabular-nums;}
-.vg-hintbtn:hover{background:rgba(255,138,99,.16);transform:translateY(-1px);}
+.vg-hintbtn:hover{background:rgba(255,185,48,.16);transform:translateY(-1px);}
 .vg-hintbtn.used{opacity:.35;cursor:default;border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.45);background:transparent;}
 .vg-hintbtn.sparkle{animation:vg-sparkle 1.15s ease-in-out infinite;}
 .vg-hintbtn.sparkle::after{
@@ -942,13 +932,13 @@ h2.split.play .hw-i{transition-delay:calc(var(--i,0)*45ms);}
   background:linear-gradient(110deg,transparent 32%,rgba(255,255,255,.4) 50%,transparent 68%);
   background-size:230% 100%;animation:vg-btn-shine 1.4s linear infinite;
 }
-@keyframes vg-sparkle{0%,100%{box-shadow:0 0 0 0 rgba(255,138,99,.45);}50%{box-shadow:0 0 24px 5px rgba(255,138,99,.4);}}
+@keyframes vg-sparkle{0%,100%{box-shadow:0 0 0 0 rgba(255,185,48,.45);}50%{box-shadow:0 0 24px 5px rgba(255,185,48,.4);}}
 @keyframes vg-btn-shine{from{background-position:135% 0;}to{background-position:-95% 0;}}
 .vg-toast{
   position:fixed;left:50%;bottom:26px;transform:translate(-50%,24px);z-index:3900;
   background:var(--paper);color:var(--ink);border-radius:16px;padding:15px 24px;max-width:460px;width:calc(100% - 48px);
   font-size:13.5px;font-weight:600;line-height:1.55;text-align:center;
-  box-shadow:0 18px 54px rgba(0,0,0,.5),0 0 0 1.5px rgba(255,138,99,.55);
+  box-shadow:0 18px 54px rgba(0,0,0,.5),0 0 0 1.5px rgba(255,185,48,.55);
   opacity:0;transition:opacity .4s ease,transform .45s var(--ease);pointer-events:none;
 }
 .vg-toast.show{opacity:1;transform:translate(-50%,0);}
@@ -1114,3 +1104,9 @@ h2.split.play .hw-i{transition-delay:calc(var(--i,0)*45ms);}
   .preloader-count{right:22px;bottom:20px;}
   .big-marquee{padding:44px 0 50px;}
 }
+
+/* ---------- YouTube facades (perf): invisible placeholders that become
+   iframes only when needed; the video then fades in over the dark bg. */
+.yt-facade{position:absolute;inset:0;pointer-events:none;}
+.hero-immersive-bg iframe{animation:ytFadeIn .9s ease both;}
+@keyframes ytFadeIn{from{opacity:0;}to{opacity:1;}}
