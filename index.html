@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://s.ytimg.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.ytimg.com; font-src https://fonts.gstatic.com; frame-src https://www.youtube-nocookie.com https://www.youtube.com; connect-src 'self' https://*.youtube.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://s.ytimg.com https://cdn.jsdelivr.net https://gc.zgo.at; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.ytimg.com https://bricemialon.goatcounter.com; font-src https://fonts.gstatic.com; frame-src https://www.youtube-nocookie.com https://www.youtube.com; connect-src 'self' https://*.youtube.com https://bricemialon.goatcounter.com; media-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Brice Mialon · Conseil en Stratégie, Management & Transformation IA</title>
@@ -12,13 +12,13 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Brice Mialon · Conseil en Stratégie, Management & Transformation IA">
 <meta property="og:description" content="Ce qu'un CV ne montre pas : les expériences, les valeurs et l'énergie, en images et en vidéos.">
-<meta property="og:image" content="https://bricemialon.github.io/hero-panorama.jpg">
+<meta property="og:image" content="https://bricemialon.github.io/assets/img/hero-panorama.jpg">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:url" content="https://bricemialon.github.io/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Brice Mialon · Conseil en Stratégie, Management & Transformation IA">
 <meta name="twitter:description" content="Étudiant en Master (IAE Lille), en recherche de stage en conseil, stratégie et transformation IA. Portfolio immersif.">
-<meta name="twitter:image" content="https://bricemialon.github.io/hero-panorama.jpg">
+<meta name="twitter:image" content="https://bricemialon.github.io/assets/img/hero-panorama.jpg">
 <link rel="canonical" href="https://bricemialon.github.io/">
 <meta name="robots" content="index, follow">
 
@@ -31,7 +31,7 @@
       "@id": "https://bricemialon.github.io/#brice",
       "name": "Brice Mialon",
       "url": "https://bricemialon.github.io/",
-      "image": "https://bricemialon.github.io/brice-photo-pro.jpg",
+      "image": "https://bricemialon.github.io/assets/img/brice-photo-pro.jpg",
       "jobTitle": "Étudiant en Master CREMS (IAE Lille) · Conseil en stratégie, management & transformation IA",
       "description": "En recherche de stage de 4 mois minimum, entre le 1er avril et le 24 août 2027, en conseil en stratégie, management, transformation digitale et intelligence artificielle. Mobile France et international.",
       "knowsAbout": ["Conseil en stratégie", "Management de projet", "Transformation digitale", "Intelligence artificielle", "Prompt engineering", "Conduite du changement", "Gestion d'équipe", "Gestion de budget", "Facilitation", "Analyse financière", "Marketing terrain", "Partenariats stratégiques"],
@@ -62,9 +62,10 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.youtube-nocookie.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=24">
+<link rel="stylesheet" href="style.css?v=26">
 </head>
 <body>
 
@@ -90,13 +91,14 @@
     <ul class="nav-links" id="navLinks">
       <li><a href="#definit">Ce qui me définit</a></li>
       <li><a href="#competences">Compétences</a></li>
+      <li><a href="#temoignage">Témoignages</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <div class="nav-cta">
-      <a href="Brice_Mialon_CV.pdf" class="btn btn-outline btn-sm" target="_blank" rel="noopener">CV</a>
+      <a href="assets/docs/Brice_Mialon_CV.pdf" class="btn btn-outline btn-sm" target="_blank" rel="noopener">CV</a>
       <a href="#contact" class="btn btn-primary btn-sm">Me contacter</a>
     </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu">
+    <button class="nav-toggle" id="navToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="navLinks">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
   </div>
@@ -104,7 +106,7 @@
 
 <header class="hero-immersive" id="top">
   <div class="hero-immersive-bg" aria-hidden="true">
-    <div class="yt-facade" data-yt-src="https://www.youtube-nocookie.com/embed/IWT0hFrPTQM?autoplay=1&mute=1&loop=1&playlist=IWT0hFrPTQM&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1" data-yt-title="Victoire par KO, gala de boxe anglaise" data-yt-eager="1"></div>
+    <div class="yt-facade" data-yt-id="heroPlayer" data-yt-src="https://www.youtube-nocookie.com/embed/IWT0hFrPTQM?autoplay=1&mute=1&loop=1&playlist=IWT0hFrPTQM&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1&enablejsapi=1&origin=https://bricemialon.github.io" data-yt-title="Victoire par KO, gala de boxe anglaise" data-yt-eager="1"></div>
   </div>
   <div class="hero-immersive-scrim"></div>
   <div class="hero-immersive-content">
@@ -121,7 +123,7 @@
       <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V7a2 2 0 0 1 4 0v3M11 10V6a2 2 0 0 1 4 0v4M15 10.5V7a2 2 0 0 1 4 0v6c0 3.5-2.5 6-6 6H10c-2 0-3-.8-4-2l-2.5-3.3a1.5 1.5 0 0 1 2.2-2L7 13"/></svg>
     </div>
   </div>
-  <div class="ko-teaser show" id="koTeaser"><span class="ko-teaser-dot"></span>Regardez jusqu'au bout…</div>
+  <div class="ko-teaser" id="koTeaser"><span class="ko-teaser-dot"></span>Regardez jusqu'au bout…</div>
 </header>
 
 <div class="hero-video-b">
@@ -133,7 +135,7 @@
     <span>Du ring de boxe au fjord du Saguenay&nbsp;: les expériences qui m'ont construit.</span>
   </div>
   <a class="fjord-photo-pro" id="fjordPhotoPro" href="https://www.linkedin.com/in/brice-mialon/" target="_blank" rel="noopener" aria-label="Voir le profil LinkedIn de Brice Mialon">
-    <img src="brice-photo-pro.webp" alt="Brice Mialon" loading="lazy">
+    <img src="assets/img/brice-photo-pro.webp" alt="Brice Mialon" loading="lazy">
   </a>
   <div class="video-hero-scrollcue" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>
 </div>
@@ -144,6 +146,23 @@
       <span class="eyebrow">Au-delà du CV</span>
       <h2>Ce qui me distingue</h2>
       <p class="muted">Un CV dit ce que j'ai fait. Ce qui suit dit qui je suis, comment je fonctionne avec les autres, et ce qui compte vraiment pour moi.</p>
+    </div>
+    <div class="essentiel reveal" aria-label="L'essentiel en 60 secondes">
+      <div class="essentiel-head">
+        <span class="essentiel-tag">Pressé ? L'essentiel en 60 secondes</span>
+        <span class="essentiel-sub">La version longue se déroule juste en dessous.</span>
+      </div>
+      <ul class="essentiel-grid">
+        <li><a href="#bde"><strong>Fédérer</strong><span>Président du BDE GACO&nbsp;: budget 40&nbsp;000&nbsp;€+, équipe de 10, ~40 événements</span></a></li>
+        <li><a href="#depassement"><strong>Sang-froid</strong><span>Boxe anglaise en compétition, galas devant 400+ personnes, victoire par TKO</span></a></li>
+        <li><a href="#international"><strong>Ouverture</strong><span>Double diplôme France-Canada, une année d'immersion à l'UQAC, au Québec</span></a></li>
+        <li><a href="#engagement"><strong>Conviction</strong><span>Facilitateur Fresque du Climat, 4 ateliers animés, ~20 participants par session</span></a></li>
+      </ul>
+      <p class="essentiel-quote">«&nbsp;Son travail a été mené de manière méthodique et organisée, avec un souci constant de fiabilité.&nbsp;»<span class="essentiel-quote-attr">Peggy Vacca, STEDIA Consulting</span></p>
+      <div class="essentiel-ctas">
+        <a href="assets/docs/Brice_Mialon_CV.pdf" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Télécharger le CV</a>
+        <a href="#contact" class="btn btn-primary btn-sm">Me contacter</a>
+      </div>
     </div>
   </div>
 </section>
@@ -164,14 +183,14 @@
       <div class="theme-visual">
         <div class="editorial-hero reveal reveal-right">
           <div class="editorial-main">
-            <img src="bde-gala.webp" alt="Soirée de gala organisée par le BDE GACO" loading="lazy">
+            <img src="assets/img/bde-gala.webp" alt="Soirée de gala organisée par le BDE GACO" loading="lazy">
             <div class="editorial-overlay">
               <span class="editorial-tag">Président du BDE GACO</span>
               <p>Soirée de gala, IUT de Saint-Étienne</p>
             </div>
           </div>
           <div class="editorial-inset">
-            <img src="bde-flyer.webp" alt="Affiche du Gala IUT organisé par le BDE" loading="lazy">
+            <img src="assets/img/bde-flyer.webp" alt="Affiche du Gala IUT organisé par le BDE" loading="lazy">
           </div>
         </div>
       </div>
@@ -186,39 +205,39 @@
         <div class="intl-intro-inner">
           <div class="theme-num">02 · OUVERTURE INTERNATIONALE</div>
           <h2>Traverser l'Atlantique pour la seconde moitié de mon diplôme</h2>
-          <p>De 2025 à 2026, mon double diplôme s'est joué à Chicoutimi, au Québec&nbsp;: nouveau système académique, nouvel accent, nouvelle vie, loin de mes repères. J'en retiens une chose : rester humble face à une culture différente, à observer avant de juger, et à construire des liens avec des gens très différents de moi.</p>
+          <p>De 2025 à 2026, mon double diplôme s'est joué à Chicoutimi, au Québec&nbsp;: nouveau système académique, nouvel accent, nouvelle vie, loin de mes repères. J'en retiens l'essentiel&nbsp;: rester humble face à une culture différente, observer avant de juger, construire des liens avec des gens très différents de moi.</p>
           <div class="invest-facts intl-facts">
             <span class="invest-fact">Double diplôme France-Canada</span>
             <span class="invest-fact">UQAC, Chicoutimi</span>
             <span class="invest-fact">Immersion culturelle totale</span>
           </div>
           <div class="intl-videos">
-            <button type="button" class="intl-vidchip" data-lightbox-video="quebec-hockey.mp4" data-poster="quebec-hockey-poster.jpg"><img src="quebec-hockey-poster.jpg" alt="">Match de hockey local</button>
-            <button type="button" class="intl-vidchip" data-lightbox-video="quebec-porcupine.mp4" data-poster="quebec-porcupine-poster.jpg"><img src="quebec-porcupine-poster.jpg" alt="">Rencontre en randonnée</button>
+            <button type="button" class="intl-vidchip" data-lightbox-video="assets/video/quebec-hockey.mp4" data-poster="assets/img/quebec-hockey-poster.jpg"><img src="assets/img/quebec-hockey-poster.jpg" alt="">Match de hockey local</button>
+            <button type="button" class="intl-vidchip" data-lightbox-video="assets/video/quebec-porcupine.mp4" data-poster="assets/img/quebec-porcupine-poster.jpg"><img src="assets/img/quebec-porcupine-poster.jpg" alt="">Rencontre en randonnée</button>
           </div>
           <p class="intl-cue">Continuez de scroller, l'immersion commence <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="vertical-align:-2px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></p>
         </div>
       </div>
       <div class="intl-panel intl-photo">
-        <img src="hero-panorama.webp" alt="Panorama face au Parc national des Monts-Valin" loading="lazy">
+        <img src="assets/img/hero-panorama.webp" alt="Panorama face au Parc national des Monts-Valin" loading="lazy">
         <div class="intl-scrim"></div>
         <div class="intl-word">Immensité</div>
         <div class="intl-cap">Face au Parc national des Monts-Valin</div>
       </div>
       <div class="intl-panel intl-photo">
-        <img src="quebec-fjord.webp" alt="Fjord du Saguenay" loading="lazy">
+        <img src="assets/img/quebec-fjord.webp" alt="Fjord du Saguenay" loading="lazy">
         <div class="intl-scrim"></div>
         <div class="intl-word">Dépaysement</div>
         <div class="intl-cap">Fjord du Saguenay, à quelques minutes du campus</div>
       </div>
       <div class="intl-panel intl-photo">
-        <img src="quebec-grad.webp" alt="Cérémonie de remise des diplômes, UQAC" loading="lazy">
+        <img src="assets/img/quebec-grad.webp" alt="Cérémonie de remise des diplômes, UQAC" loading="lazy">
         <div class="intl-scrim"></div>
         <div class="intl-word">Fierté</div>
         <div class="intl-cap">Cérémonie de remise des diplômes, UQAC</div>
       </div>
       <div class="intl-panel intl-photo">
-        <img src="quebec-neon.webp" alt="Campus de l'UQAC, de nuit" loading="lazy">
+        <img src="assets/img/quebec-neon.webp" alt="Campus de l'UQAC, de nuit" loading="lazy">
         <div class="intl-scrim"></div>
         <div class="intl-word">Appartenance</div>
         <div class="intl-cap">Le campus de l'UQAC, de nuit</div>
@@ -245,15 +264,15 @@
         <div class="carousel tall reveal reveal-scale" data-carousel>
           <div class="carousel-track">
             <div class="carousel-slide is-video">
-              <video src="boxe-tko.mp4" poster="boxe-tko-poster.webp" muted loop playsinline preload="metadata"></video>
+              <video src="assets/video/boxe-tko.mp4" poster="assets/img/boxe-tko-poster.webp" muted loop playsinline preload="metadata"></video>
               <div class="carousel-play"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
               <div class="slide-caption">Victoire par TKO au premier round</div>
             </div>
-            <div class="carousel-slide"><img src="boxe-victory.webp" alt="Main levée en victoire lors d'un gala de boxe anglaise" loading="lazy"><div class="slide-caption">Main levée, gala de boxe anglaise</div></div>
-            <div class="carousel-slide"><img src="boxe-team.webp" alt="Brice Mialon avec sa médaille et son équipe" loading="lazy"><div class="slide-caption">Avec l'équipe et les entraîneurs, médaille en main</div></div>
-            <div class="carousel-slide"><img src="boxe-gym.webp" alt="Salle de boxe et gants au sol" loading="lazy"><div class="slide-caption">La salle, avant l'entraînement</div></div>
+            <div class="carousel-slide"><img src="assets/img/boxe-victory.webp" alt="Main levée en victoire lors d'un gala de boxe anglaise" loading="lazy"><div class="slide-caption">Main levée, gala de boxe anglaise</div></div>
+            <div class="carousel-slide"><img src="assets/img/boxe-team.webp" alt="Brice Mialon avec sa médaille et son équipe" loading="lazy"><div class="slide-caption">Avec l'équipe et les entraîneurs, médaille en main</div></div>
+            <div class="carousel-slide"><img src="assets/img/boxe-gym.webp" alt="Salle de boxe et gants au sol" loading="lazy"><div class="slide-caption">La salle, avant l'entraînement</div></div>
             <div class="carousel-slide is-video">
-              <video src="boxe-crowd.mp4" poster="boxe-crowd-poster.webp" muted loop playsinline preload="metadata"></video>
+              <video src="assets/video/boxe-crowd.mp4" poster="assets/img/boxe-crowd-poster.webp" muted loop playsinline preload="metadata"></video>
               <div class="carousel-play"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
               <div class="slide-caption">Ambiance de gala, côté public</div>
             </div>
@@ -284,12 +303,12 @@
       <div class="theme-visual">
         <div class="duo">
           <div class="duo-item is-video reveal reveal-left">
-            <video src="fresque-facilitation.mp4" poster="fresque-facilitation-poster.webp" muted loop playsinline preload="metadata"></video>
+            <video src="assets/video/fresque-facilitation.mp4" poster="assets/img/fresque-facilitation-poster.webp" muted loop playsinline preload="metadata"></video>
             <div class="carousel-play"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
             <div class="slide-caption">Animation d'un atelier Fresque du Climat</div>
           </div>
           <div class="duo-item reveal reveal-right">
-            <img src="fresque-table.webp" alt="Atelier Fresque du Climat animé par Brice Mialon" loading="lazy">
+            <img src="assets/img/fresque-table.webp" alt="Atelier Fresque du Climat animé par Brice Mialon" loading="lazy">
             <div class="slide-caption">Discussion collective autour de la fresque</div>
           </div>
         </div>
@@ -302,7 +321,7 @@
   <div class="invest-stage">
     <div class="invest-frame">
       <div class="hero-immersive-bg invest-cinema-bg" aria-hidden="true">
-        <div class="yt-facade" data-yt-src="https://www.youtube-nocookie.com/embed/AFicYbv-mzg?autoplay=1&mute=1&loop=1&playlist=AFicYbv-mzg&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1" data-yt-title="Les marchés financiers, en cinématique"></div>
+        <div class="yt-facade" data-yt-id="investPlayer" data-yt-src="https://www.youtube-nocookie.com/embed/AFicYbv-mzg?autoplay=1&mute=1&loop=1&playlist=AFicYbv-mzg&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1&enablejsapi=1&origin=https://bricemialon.github.io" data-yt-title="Les marchés financiers, en cinématique"></div>
       </div>
       <div class="invest-scrim"></div>
     </div>
@@ -323,7 +342,7 @@
   <div class="rb-stage">
     <div class="rb-frame" id="rbFrame">
       <div class="hero-immersive-bg rb-bg" id="rbBg" aria-hidden="true">
-        <div class="yt-facade" data-yt-src="https://www.youtube-nocookie.com/embed/IQQf7FEr668?autoplay=1&mute=1&loop=1&playlist=IQQf7FEr668&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1" data-yt-title="L'univers Red Bull"></div>
+        <div class="yt-facade" data-yt-id="rbPlayer" data-yt-src="https://www.youtube-nocookie.com/embed/IQQf7FEr668?autoplay=1&mute=1&loop=1&playlist=IQQf7FEr668&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1&enablejsapi=1&origin=https://bricemialon.github.io" data-yt-title="L'univers Red Bull"></div>
       </div>
       <div class="rb-scrim"></div>
     </div>
@@ -338,8 +357,8 @@
         <span class="invest-fact">Visibilité terrain</span>
       </div>
     </div>
-    <div class="rb-photo" id="rbPhoto" data-lightbox-img="redbull-kickoff.webp" data-alt="Red Bull Kick Off : toute l'équipe réunie">
-      <img src="redbull-kickoff.webp" alt="Red Bull Kick Off, rassemblement des Student Marketeers" loading="lazy">
+    <div class="rb-photo" id="rbPhoto" data-lightbox-img="assets/img/redbull-kickoff.webp" data-alt="Red Bull Kick Off : toute l'équipe réunie">
+      <img src="assets/img/redbull-kickoff.webp" alt="Red Bull Kick Off, rassemblement des Student Marketeers" loading="lazy">
       <span>Red Bull Kick Off&nbsp;: toute l'équipe réunie</span>
     </div>
   </div>
@@ -355,16 +374,16 @@
   </div>
   <div class="cert-marquee reveal">
     <div class="marquee-track">
-      <div class="marquee-item"><img src="cert-gpm.webp" alt="Certificat Google Project Management" loading="lazy"></div>
-      <div class="marquee-item"><img src="cert-lvmh.webp" alt="Certificat Inside LVMH" loading="lazy"></div>
-      <div class="marquee-item"><img src="cert-ai.webp" alt="Certificat Elements of AI, Sorbonne Université" loading="lazy"></div>
-      <div class="marquee-item"><img src="cert-saviynt.webp" alt="Certificat Saviynt Identity Security for AI Age" loading="lazy"></div>
-      <div class="marquee-item"><img src="cert-columbia.webp" alt="Certificat Columbia+ Prompt Engineering &amp; Programming with OpenAI" loading="lazy"></div>
-      <div class="marquee-item"><img src="cert-gpm.webp" alt="Certificat Google Project Management" loading="lazy"></div>
-      <div class="marquee-item"><img src="cert-lvmh.webp" alt="Certificat Inside LVMH" loading="lazy"></div>
-      <div class="marquee-item"><img src="cert-ai.webp" alt="Certificat Elements of AI, Sorbonne Université" loading="lazy"></div>
-      <div class="marquee-item"><img src="cert-saviynt.webp" alt="Certificat Saviynt Identity Security for AI Age" loading="lazy"></div>
-      <div class="marquee-item"><img src="cert-columbia.webp" alt="Certificat Columbia+ Prompt Engineering &amp; Programming with OpenAI" loading="lazy"></div>
+      <div class="marquee-item"><img src="assets/img/cert-gpm.webp" alt="Certificat Google Project Management" loading="lazy"><span class="marquee-label"><strong>Google Project Management</strong>Google · Coursera</span></div>
+      <div class="marquee-item"><img src="assets/img/cert-lvmh.webp" alt="Certificat Inside LVMH" loading="lazy"><span class="marquee-label"><strong>Inside LVMH</strong>LVMH</span></div>
+      <div class="marquee-item"><img src="assets/img/cert-ai.webp" alt="Certificat Elements of AI, Sorbonne Université" loading="lazy"><span class="marquee-label"><strong>Elements of AI</strong>Sorbonne Université</span></div>
+      <div class="marquee-item"><img src="assets/img/cert-saviynt.webp" alt="Certificat Saviynt Identity Security for AI Age" loading="lazy"><span class="marquee-label"><strong>Identity Security for the AI Age</strong>Saviynt</span></div>
+      <div class="marquee-item"><img src="assets/img/cert-columbia.webp" alt="Certificat Columbia+ Prompt Engineering &amp; Programming with OpenAI" loading="lazy"><span class="marquee-label"><strong>Prompt Engineering &amp; Programming with OpenAI</strong>Columbia+ · Columbia University</span></div>
+      <div class="marquee-item"><img src="assets/img/cert-gpm.webp" alt="Certificat Google Project Management" loading="lazy"><span class="marquee-label"><strong>Google Project Management</strong>Google · Coursera</span></div>
+      <div class="marquee-item"><img src="assets/img/cert-lvmh.webp" alt="Certificat Inside LVMH" loading="lazy"><span class="marquee-label"><strong>Inside LVMH</strong>LVMH</span></div>
+      <div class="marquee-item"><img src="assets/img/cert-ai.webp" alt="Certificat Elements of AI, Sorbonne Université" loading="lazy"><span class="marquee-label"><strong>Elements of AI</strong>Sorbonne Université</span></div>
+      <div class="marquee-item"><img src="assets/img/cert-saviynt.webp" alt="Certificat Saviynt Identity Security for AI Age" loading="lazy"><span class="marquee-label"><strong>Identity Security for the AI Age</strong>Saviynt</span></div>
+      <div class="marquee-item"><img src="assets/img/cert-columbia.webp" alt="Certificat Columbia+ Prompt Engineering &amp; Programming with OpenAI" loading="lazy"><span class="marquee-label"><strong>Prompt Engineering &amp; Programming with OpenAI</strong>Columbia+ · Columbia University</span></div>
     </div>
   </div>
 </section>
@@ -373,7 +392,7 @@
   <div class="container">
     <div class="section-head center reveal" style="margin-bottom:36px;">
       <span class="eyebrow">Témoignages</span>
-      <h2>Ce qu'on retient de lui</h2>
+      <h2>Ce qu'ils retiennent de moi</h2>
     </div>
     <div class="testi-carousel reveal" data-testi>
       <div class="testi-slide active">
@@ -400,7 +419,7 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
         </button>
       </div>
-      <a href="Lettre_recommandation_Sophie_Eyrignoux.pdf" target="_blank" rel="noopener" class="testi-link">Lire les lettres complètes (PDF)</a>
+      <a href="assets/docs/Lettre_recommandation_Sophie_Eyrignoux.pdf" target="_blank" rel="noopener" class="testi-link">Lire la lettre complète (PDF)</a>
     </div>
   </div>
 </section>
@@ -416,10 +435,10 @@
     <div class="contact-grid">
       <div class="reveal">
         <h2>Discutons de votre prochain projet.</h2>
-        <p class="sub" id="contact-stage">En recherche d'un stage de 4 mois minimum à partir du 1ᵉʳ avril 2027, fin flexible jusqu'au 24 août selon vos besoins. Il accompagne mon Master CREMS à l'IAE Lille.</p>
+        <p class="sub" id="contact-stage">En recherche d'un stage de 4 mois minimum à partir du 1ᵉʳ avril 2027, fin flexible jusqu'au 24 août selon vos besoins. Ce stage accompagne mon Master CREMS à l'IAE Lille.</p>
         <div class="contact-ctas">
           <a href="mailto:Bricemialon.pro@gmail.com" class="btn btn-primary">Envoyer un e-mail</a>
-          <a href="Brice_Mialon_CV.pdf" class="btn btn-light" target="_blank" rel="noopener">Télécharger le CV</a>
+          <a href="assets/docs/Brice_Mialon_CV.pdf" class="btn btn-light" target="_blank" rel="noopener">Télécharger le CV</a>
         </div>
       </div>
       <div class="contact-links reveal">
@@ -432,6 +451,15 @@
   </div>
 </section>
 
+<section class="colophon">
+  <div class="container">
+    <details>
+      <summary>Comment ce site est construit</summary>
+      <p>Fait main en HTML, CSS et JavaScript natifs, sans framework ni template. Sous le capot&nbsp;: chargement différé des vidéos pour un premier rendu instantané, images WebP, animations désactivées si votre système préfère la sobriété, politique de sécurité stricte (CSP), données structurées schema.org. Conçu et itéré en pilotant des assistants IA, du design au code, puis relu et assemblé ligne par ligne. <a href="https://github.com/BriceMialon/BriceMialon.github.io" target="_blank" rel="noopener">Le code est public sur GitHub</a>.</p>
+    </details>
+  </div>
+</section>
+
 <footer class="footer">
   <div class="container">
     <p>© 2026 Brice Mialon</p>
@@ -439,12 +467,13 @@
   </div>
 </footer>
 
-<div class="lightbox" id="lightbox">
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Agrandissement du média">
   <button class="lightbox-close" id="lightboxClose" aria-label="Fermer">&times;</button>
   <div class="lightbox-content" id="lightboxContent"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js" integrity="sha384-eD5ubmuCcvTdCADWuSchJYE7wcj2nzNr0itbrh6w/KJyBiltSZ8w3VFRBSWu5YQ8" crossorigin="anonymous"></script>
-<script src="script.js?v=24"></script>
+<script src="script.js?v=26"></script>
+<script data-goatcounter="https://bricemialon.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
