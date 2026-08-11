@@ -58,13 +58,13 @@
 }
 </script>
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%233654ff'/%3E%3Ctext x='50' y='68' font-size='50' font-family='Arial,sans-serif' font-weight='800' fill='%23fff' text-anchor='middle'%3EBM%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231c2b4f'/%3E%3Ctext x='50' y='68' font-size='50' font-family='Arial,sans-serif' font-weight='800' fill='%23d8b76a' text-anchor='middle'%3EBM%3C/text%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=23">
+<link rel="stylesheet" href="style.css?v=24">
 </head>
 <body>
 
@@ -148,42 +148,6 @@
   </div>
 </section>
 
-<section class="vg-section" id="jeu">
-  <div class="vg-bgvideo" aria-hidden="true">
-    <div class="yt-facade" data-yt-id="vgBgPlayer" data-yt-src="https://www.youtube-nocookie.com/embed/6skaM_CsTPg?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&playsinline=1&disablekb=1&enablejsapi=1&origin=https://bricemialon.github.io" data-yt-title="Ambiance de jeu"></div>
-    <div class="vg-bgvideo-veil"></div>
-  </div>
-  <div class="vg-glow vg-glow-a" aria-hidden="true"></div>
-  <div class="vg-glow vg-glow-b" aria-hidden="true"></div>
-  <div class="vg-shell">
-    <div class="vg-header">
-      <span class="vg-eyebrow">Le jeu</span>
-      <h3 class="vg-title">Devine ce qui me définit.</h3>
-      <p class="vg-sub">Tapez les qualités que vous attendez d'un futur collègue ou stagiaire. Si ça me ressemble (et il y a de grandes chances), la carte se retourne et je vous explique pourquoi.</p>
-      <form class="vg-form" id="vgForm" autocomplete="off">
-        <input type="text" id="vgInput" maxlength="40" placeholder="Écoute, rigueur, audace…" aria-label="Proposez une qualité">
-        <button type="submit" class="btn btn-primary btn-sm">Jouer</button>
-      </form>
-      <p class="vg-feedback" id="vgFeedback">Seize cartes cachées. À vous de jouer.</p>
-    </div>
-    <div class="vg-board">
-      <div class="vg-scoreline">
-        <div class="vg-stat"><span>Score</span><b id="vgScore">0</b></div>
-        <div class="vg-sep" aria-hidden="true"></div>
-        <div class="vg-progress">
-          <div class="vg-progress-top"><span id="vgLevel">Niv. 1 · Observateur</span><span id="vgFoundCount">0/16</span></div>
-          <div class="vg-bar"><span id="vgBar"></span></div>
-        </div>
-        <div class="vg-sep" aria-hidden="true"></div>
-        <div class="vg-stat vg-rank"><span>Classement</span><b id="vgRank">···</b></div>
-        <button type="button" class="vg-hintbtn" id="vgHint">Indice · <b id="vgHintCount">5</b></button>
-        <button type="button" class="vg-reveal" id="vgReveal">Tout révéler</button>
-      </div>
-      <div class="vg-grid" id="vgGrid" aria-live="polite"></div>
-    </div>
-  </div>
-</section>
-
 <section class="theme-section" id="bde">
   <div class="container">
     <div class="theme-grid">
@@ -215,44 +179,12 @@
   </div>
 </section>
 
-<section class="theme-section" id="ujm">
-  <div class="container">
-    <div class="theme-grid reverse">
-      <div class="theme-text reveal reveal-right">
-        <div class="theme-num">02 · FONDATION UJM</div>
-        <h2>Représenter le territoire, un contenu à la fois</h2>
-        <p>Ambassadeur du Territoire de la Loire pour la Fondation UJM : ma mission, c'est de raconter Saint-Étienne avec sincérité à des étudiants qui ne la connaissent pas encore, pour leur donner vraiment envie de tenter l'aventure internationale. Ça demande de la curiosité pour comprendre ce qui parle à chacun, et une vraie envie de transmettre plutôt que de simplement communiquer.</p>
-        <div class="theme-facts">
-          <span class="theme-fact">Représentation internationale</span>
-          <span class="theme-fact">Création de contenus</span>
-          <span class="theme-fact">Milliers de vues générées</span>
-        </div>
-      </div>
-      <div class="theme-visual">
-        <div class="editorial-hero reveal reveal-flip">
-          <div class="editorial-main is-video">
-            <video src="ujm-video.mp4" poster="ujm-video-poster.jpg" muted loop playsinline preload="metadata"></video>
-            <div class="carousel-play"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
-            <div class="editorial-overlay">
-              <span class="editorial-tag">Ambassadeur Territoire de la Loire</span>
-              <p>Promotion de Saint-Étienne à l'international</p>
-            </div>
-          </div>
-          <div class="editorial-inset top-left">
-            <img src="ambassadeur-group.webp" alt="Remise des certificats Ambassadeur, Fondation UJM" loading="lazy">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section class="intl-cinema" id="international">
   <div class="intl-stage">
     <div class="intl-track" id="intlTrack">
       <div class="intl-panel intl-intro">
         <div class="intl-intro-inner">
-          <div class="theme-num">03 · OUVERTURE INTERNATIONALE</div>
+          <div class="theme-num">02 · OUVERTURE INTERNATIONALE</div>
           <h2>Traverser l'Atlantique pour la seconde moitié de mon diplôme</h2>
           <p>De 2025 à 2026, mon double diplôme s'est joué à Chicoutimi, au Québec&nbsp;: nouveau système académique, nouvel accent, nouvelle vie, loin de mes repères. J'en retiens une chose : rester humble face à une culture différente, à observer avant de juger, et à construire des liens avec des gens très différents de moi.</p>
           <div class="invest-facts intl-facts">
@@ -300,7 +232,7 @@
   <div class="container">
     <div class="theme-grid">
       <div class="theme-text reveal reveal-left">
-        <div class="theme-num">04 · DÉPASSEMENT DE SOI</div>
+        <div class="theme-num">03 · DÉPASSEMENT DE SOI</div>
         <h2>Ce que la boxe m'a appris sur la gestion du stress</h2>
         <p>Monter sur un ring devant 400 personnes, c'est apprendre à regarder la peur en face et à rester lucide quand la pression monte, que je gagne ou que je perde. Cette discipline du sang-froid, je la retrouve telle quelle en réunion de partenaires ou face à un imprévu de dernière minute. Pratiquant de boxe anglaise et d'arts martiaux depuis 2022, niveau compétiteur.</p>
         <div class="theme-facts">
@@ -340,7 +272,7 @@
   <div class="container">
     <div class="theme-grid reverse">
       <div class="theme-text reveal reveal-right">
-        <div class="theme-num">05 · ENGAGEMENT</div>
+        <div class="theme-num">04 · ENGAGEMENT</div>
         <h2>Sensibiliser au dérèglement climatique, un atelier à la fois</h2>
         <p>Animer une Fresque du Climat, c'est apprendre à accueillir des points de vue très différents sur un sujet qui peut diviser, et à faire émerger une compréhension commune sans jamais forcer les choses. C'est une conviction personnelle autant qu'une compétence : 4 ateliers animés à ce jour, une vingtaine de personnes à chaque fois, et une facilitation que je réutilise dans toutes mes autres missions.</p>
         <div class="theme-facts">
@@ -375,13 +307,13 @@
       <div class="invest-scrim"></div>
     </div>
     <div class="invest-content">
-      <span class="eyebrow invest-eyebrow">06 · Investissement</span>
-      <h2>Mon parcours, je le gère comme un investissement de long terme.</h2>
-      <p>Trois ans sur les marchés financiers m'ont appris ce qu'aucun cours ne m'avait enseigné&nbsp;: il y a des sommets, des corrections brutales, des périodes où tout semble stagner. Mais avec de la patience et une vision long terme, la courbe finit toujours par progresser. J'applique une stratégie ETF et stock picking pour rester diversifié, et j'avance pareil dans la vie comme dans le monde pro&nbsp;: je multiplie les expériences, je garde une vision stratégique, et je laisse le temps jouer pour moi.</p>
+      <span class="eyebrow invest-eyebrow">05 · Analyse & marchés financiers</span>
+      <h2>La vision long terme, appliquée aux marchés comme aux projets.</h2>
+      <p>Depuis trois ans, je gère un portefeuille personnel selon une logique de gestion de risque et d'allocation&nbsp;: diversification, arbitrages entre stratégie indicielle (ETF) et sélection de titres, discipline face à la volatilité. C'est un exercice d'analyse et de patience que j'applique de la même façon à un projet&nbsp;: prendre du recul sur les cycles courts, arbitrer avec méthode, et tenir une vision de long terme même quand les résultats ne sont pas immédiats.</p>
       <div class="invest-facts">
-        <span class="invest-fact">3 ans d'investissement</span>
-        <span class="invest-fact">Stratégie ETF &amp; stock picking</span>
-        <span class="invest-fact">Diversification &amp; vision long terme</span>
+        <span class="invest-fact">3 ans de gestion de portefeuille</span>
+        <span class="invest-fact">Allocation ETF &amp; stock picking</span>
+        <span class="invest-fact">Analyse de risque &amp; vision long terme</span>
       </div>
     </div>
   </div>
@@ -397,7 +329,7 @@
     </div>
     <div class="rb-flyline" id="rbFlyline" aria-hidden="true"><span>Red Bull donne des aiiiles&nbsp;·&nbsp;Red Bull donne des aiiiles&nbsp;·&nbsp;Red Bull donne des aiiiles&nbsp;·&nbsp;</span></div>
     <div class="rb-content" id="rbContent">
-      <span class="eyebrow rb-eyebrow">07 · Student Marketeer Red Bull</span>
+      <span class="eyebrow rb-eyebrow">06 · Student Marketeer Red Bull</span>
       <h2>Incarner une marque, créer l'événement</h2>
       <p>Mon vrai rôle de Student Marketeer, c'est de créer du lien&nbsp;: aller vers les gens, sentir l'énergie d'un groupe et savoir la faire monter, transmettre une bonne humeur sincère plutôt que de vendre un produit. Ça demande d'être à l'aise avec l'imprévu et d'aimer profondément le contact humain, sur le terrain, au quotidien.</p>
       <div class="invest-facts rb-facts">
@@ -513,6 +445,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js" integrity="sha384-eD5ubmuCcvTdCADWuSchJYE7wcj2nzNr0itbrh6w/KJyBiltSZ8w3VFRBSWu5YQ8" crossorigin="anonymous"></script>
-<script src="script.js?v=23"></script>
+<script src="script.js?v=24"></script>
 </body>
 </html>
