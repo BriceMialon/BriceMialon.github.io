@@ -8,7 +8,7 @@ Portfolio personnel pensé comme le complément d'un CV : il ne répète pas mes
 
 ## Choix techniques
 
-Le site est fait main en HTML, CSS et JavaScript natifs, sans framework, sans dépendance de build. Une seule bibliothèque externe : [Lenis](https://github.com/darkroomengineering/lenis) pour l'inertie de défilement, chargée depuis un CDN avec contrôle d'intégrité (SRI).
+Le site est construit avec Claude, l'assistant IA d'Anthropic, en HTML, CSS et JavaScript natifs, sans framework, sans dépendance de build. Une seule bibliothèque externe : [Lenis](https://github.com/darkroomengineering/lenis) pour l'inertie de défilement, chargée depuis un CDN avec contrôle d'intégrité (SRI).
 
 Performance :
 
@@ -51,7 +51,7 @@ Puis ouvrir http://localhost:8000.
 
 ## Méthode
 
-Conçu et itéré en pilotant des assistants IA, du design au code, puis relu, testé et assemblé ligne par ligne. Ce dépôt fait partie de la démonstration : la transformation par l'IA, appliquée à mon propre projet.
+Conçu et itéré avec Claude, du design au code, puis relu et testé ligne par ligne. Ce dépôt fait partie de la démonstration : la transformation par l'IA, appliquée à mon propre projet.
 
 ## Contact
 
