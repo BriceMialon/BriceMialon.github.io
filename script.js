@@ -90,6 +90,10 @@ try { if (window.top !== window.self) { window.top.location = window.self.locati
     ifr.setAttribute('frameborder', '0');
     ifr.setAttribute('allow', 'autoplay; encrypted-media');
     ifr.tabIndex = -1;
+    /* Invisible tant que la vidéo ne joue pas : le poster reste affiché,
+       jamais le panneau d'erreur YouTube (réseau d'entreprise qui filtre
+       YouTube, vidéo indisponible). PLAYING retire la classe (makeWatcher). */
+    if (fid) ifr.classList.add('yt-hidden');
     if (f.parentNode) f.parentNode.replaceChild(ifr, f);
     if (src.indexOf('enablejsapi=1') !== -1) {
       ensureYtApi();
