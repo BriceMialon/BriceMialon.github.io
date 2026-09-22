@@ -13,6 +13,7 @@ Le site est construit avec Claude, l'assistant IA d'Anthropic, en HTML, CSS et J
 Performance :
 
 - Façades vidéo : aucun iframe YouTube ne se charge avant le premier rendu. Chaque vidéo d'arrière-plan ne devient un vrai player que lorsque sa section approche du viewport.
+- Mobile et tablette : aucun lecteur YouTube n'est chargé, les images poster de chaque section suffisent.
 - Filet de sécurité vidéo : chaque iframe d'arrière-plan reste invisible tant que la vidéo ne joue pas. Si elle ne démarre jamais (réseau qui filtre YouTube, embed en erreur), l'image poster reste affichée, jamais un message d'erreur ni un écran noir.
 - Images servies en WebP avec chargement différé, vidéos courtes auto-hébergées en MP4 avec posters.
 - `content-visibility: auto` sur les chapitres hors écran, préconnexions DNS, cache-busting versionné.

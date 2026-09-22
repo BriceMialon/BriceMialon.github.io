@@ -111,6 +111,9 @@ try { if (window.top !== window.self) { window.top.location = window.self.locati
   }
 
   function init() {
+    /* 5. Mobile et tablette : aucun lecteur YouTube (plusieurs Mo de code
+       pour une vidéo de fond). Les images poster de chaque section suffisent. */
+    if (window.matchMedia && window.matchMedia('(max-width: 900px), (hover: none) and (pointer: coarse)').matches) return;
     var facades = Array.prototype.slice.call(document.querySelectorAll('.yt-facade'));
     if (!facades.length) return;
 
