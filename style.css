@@ -413,12 +413,9 @@ section{position:relative;}
 .marquee-item:hover img{transform:scale(1.08);}
 .marquee-label{display:block;padding:10px 14px 12px;font-size:12px;line-height:1.35;color:var(--muted);font-weight:600;}
 .marquee-label strong{display:block;font-family:var(--font-display);font-weight:800;font-size:13px;color:var(--ink);margin-bottom:1px;}
-/* Certifications : grille fixe (3 éléments, alignée sur le CV) */
-.cert-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;}
-.cert-grid .marquee-item{width:auto;}
-.cert-text-item{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-md);border:1px solid var(--line);background:#fff;}
-.cert-text-visual{display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;background:var(--primary);color:var(--sun);font-family:var(--font-display);font-weight:800;font-size:26px;letter-spacing:-.02em;text-align:center;padding:0 18px;}
-@media (max-width:760px){.cert-grid{grid-template-columns:1fr;max-width:360px;margin:0 auto;}}
+/* Certification sans visuel (texte) dans le défilé */
+.marquee-text{cursor:default;}
+.cert-text-visual{display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;background:var(--primary);color:var(--sun);font-family:var(--font-display);font-weight:800;font-size:24px;letter-spacing:-.02em;text-align:center;padding:0 16px;}
 @keyframes marquee-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
 /* ============ TESTIMONIAL CAROUSEL ============ */
